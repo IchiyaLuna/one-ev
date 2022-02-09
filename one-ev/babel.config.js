@@ -4,10 +4,10 @@ module.exports = {
   ],
   plugins: [
     [
-      "component",
+      'component',
       {
-        libraryName: "element-plus",
-        styleLibraryName: "theme-chalk",
+        libraryName: 'element-plus',
+        styleLibraryName: 'theme-chalk',
       },
     ],
   ],

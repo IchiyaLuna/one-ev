@@ -10,7 +10,7 @@ export const ordersChart = {
     gradientStroke.addColorStop(0, color);
     gradientStroke.addColorStop(1, chartColor);
 
-    new Chart(ctx, {
+    const myChart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -60,6 +60,7 @@ export const ordersChart = {
                   if (!(value % 10)) {
                     return value;
                   }
+                  return 0;
                 },
               },
             },

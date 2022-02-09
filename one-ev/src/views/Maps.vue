@@ -104,7 +104,7 @@ export default {
       const mapOptions = {
         zoom: 13,
         center: myLatlng,
-        scrollwheel: false, // we disable de scroll over the map, it is a really annoing when you scroll through page
+        scrollwheel: false, // we disable de scroll over the map
         disableDefaultUI: true, // a way to quickly hide all controls
         zoomControl: true,
         styles: [
