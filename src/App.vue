@@ -6,9 +6,27 @@
   <router-view/>
 </template>
 
+<script>
+export default {
+  data() {
+    return{
+      version: 'v0.0.1',
+    }
+  }
+}
+</script>
+
 <style lang="scss">
+
+@font-face {
+    font-family: 'GmarketSansLight';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'GmarketSansLight';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
