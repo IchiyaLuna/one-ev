@@ -338,7 +338,6 @@
 
       //Search
       function searchName() {
-        console.log($("#name_filter").val());
         $("#studentTable").DataTable().column("0").search($("#name_filter").val()).draw();
       }
 
