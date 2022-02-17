@@ -4,10 +4,53 @@
 
 <script>
   export default {
-    provide: {
-      appData: {
-        version: "v0.0.2",
-      },
+    data() {
+      return {
+        routeData: {
+          rootMenu: ["home", "student", "class", "teacher", "academy"],
+          home: {
+            name: "Home",
+            icon: "fa-regular fa-house ",
+            path: "/home",
+          },
+          student: {
+            name: "학생 관리",
+            icon: "fa-regular fa-address-card",
+            path: "/student",
+            children: [
+              {
+                path: "timeline",
+              },
+              {
+                path: "/consult",
+              },
+            ],
+          },
+          class: {
+            name: "수업 관리",
+            icon: "fa-regular fa-screen-users",
+            path: "/class",
+          },
+          teacher: {
+            name: "강사 관리",
+            icon: "fa-regular fa-chalkboard-user",
+            path: "/teacher",
+          },
+          academy: {
+            name: "학원 관리",
+            icon: "fa-regular fa-school",
+            path: "/academy",
+          },
+        },
+      };
+    },
+    provide() {
+      return {
+        appData: {
+          version: "v0.0.2",
+        },
+        routeData: this.routeData,
+      };
     },
   };
 </script>

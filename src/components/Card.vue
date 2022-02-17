@@ -23,7 +23,7 @@
         </div>
         <!-- Icon area -->
         <div class="col-4 text-end">
-          <div class="icon icon-shape bg-gradient-success shadow-primary text-center rounded-circle">
+          <div class="icon icon-shape shadow-primary text-center rounded-circle" :class="data.iconColor">
             <i class="text-lg opacity-10" :class="[data.icon]" aria-hidden="true"></i>
           </div>
         </div>
@@ -40,6 +40,8 @@
         type: Object,
         default: () => {
           return {
+            icon: "",
+            iconColor: "",
             title: "",
             value: "",
             isPositive: false,

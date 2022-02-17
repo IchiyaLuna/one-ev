@@ -5,31 +5,12 @@
   <sidebar>
     <template v-slot:links>
       <sidebar-item
+        v-for="data in this.routeData.rootMenu"
+        :key="data"
         :link="{
-          name: 'Home',
-          icon: 'fa-light fa-house text-primary text-sm top-0 opacity-10',
-          path: '/home',
-        }"
-      />
-      <sidebar-item
-        :link="{
-          name: '학생 관리',
-          icon: 'fa-light fa-address-card text-primary text-sm top-0 opacity-10',
-          path: '/student',
-        }"
-      />
-      <sidebar-item
-        :link="{
-          name: 'About',
-          icon: 'ni ni-tv-2 text-primary text-sm opacity-10',
-          path: '/about',
-        }"
-      />
-      <sidebar-item
-        :link="{
-          name: 'About',
-          icon: 'ni ni-tv-2 text-primary text-sm opacity-10',
-          path: '/about',
+          name: this.routeData[data].name,
+          icon: this.routeData[data].icon,
+          path: this.routeData[data].path,
         }"
       />
     </template>
@@ -60,14 +41,17 @@
   import ApplicationFooter from "@/components/ApplicationFooter.vue";
 
   const locationInfo = {
-    about: ["About"],
     home: ["Home"],
     student: ["학생 관리"],
     timeline: ["학생 관리", "시간표"],
     consult: ["학생 관리", "상담 기록"],
+    class: ["수업 관리"],
+    teacher: ["강사 관리"],
+    academy: ["학원 관리"],
   };
 
   export default {
+    inject: ["routeData"],
     components: {
       Sidebar,
       SidebarItem,
@@ -82,6 +66,7 @@
         },
       };
     },
+    methods: {},
     watch: {
       $route() {
         this.navData.currentPath = locationInfo[this.$route.name];

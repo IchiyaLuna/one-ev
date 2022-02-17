@@ -4,7 +4,9 @@ import MainLayout from "@/layouts/MainLayout.vue";
 
 import Home from "@/views/Home.vue";
 import Student from "@/views/Student.vue";
-import About from "@/views/About.vue";
+import Class from "@/views/Class.vue";
+import Teacher from "@/views/Teacher.vue";
+import Academy from "@/views/Academy.vue";
 
 import Timeline from "@/components/Timeline.vue";
 import Consult from "@/components/Consult.vue";
@@ -39,9 +41,19 @@ const routes = [
         ],
       },
       {
-        path: "/about",
-        name: "about",
-        components: { default: About },
+        path: "/class",
+        name: "class",
+        components: { default: Class },
+      },
+      {
+        path: "/teacher",
+        name: "teacher",
+        components: { default: Teacher },
+      },
+      {
+        path: "/academy",
+        name: "academy",
+        components: { default: Academy },
       },
     ],
   },

@@ -225,7 +225,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row mt-3">
             <div class="col-3">
               <label class="form-label">학교</label>
               <div class="input-group">
@@ -330,6 +330,9 @@
             className: "dt-center",
           },
         ],
+        language: {
+          zeroRecords: "검색 결과가 없습니다",
+        },
       });
       //Header Fix
       $("#studentTableHeader > tr > th").css("background-color", "white");
@@ -338,7 +341,6 @@
 
       //Search
       function searchName() {
-        console.log($("#name_filter").val());
         $("#studentTable").DataTable().column("0").search($("#name_filter").val()).draw();
       }
 

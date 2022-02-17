@@ -1,297 +1,198 @@
 <template>
-  <div class="row">
-    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-      <card
-        :data="{
-          icon: 'fa-solid fa-user-check',
-          title: '출석 현황',
-          value: '40',
-          delta: '10',
-          deltaMessage: '증가',
-          isPositive: true,
-          isNegative: false,
-        }"
-      ></card>
-    </div>
-    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-      <div class="card">
-        <div class="card-body p-3">
-          <div class="row">
-            <div class="col-8">
-              <div class="numbers">
-                <p class="text-sm mb-0 text-uppercase font-weight-bold">Today's Users</p>
-                <h5 class="font-weight-bolder">2,300</h5>
-                <p class="mb-0">
-                  <span class="text-success text-sm font-weight-bolder">+3%</span>
-                  since last week
-                </p>
-              </div>
-            </div>
-            <div class="col-4 text-end">
-              <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle">
-                <i class="ni ni-world text-lg opacity-10" aria-hidden="true"></i>
-              </div>
-            </div>
-          </div>
-        </div>
+  <!-- Main panel -->
+  <div class="main-panel d-flex flex-column">
+    <!-- Top panel -->
+    <div class="row">
+      <div class="col-3 mb-4">
+        <card
+          :data="{
+            icon: 'fa-solid fa-user-check',
+            iconColor: 'bg-gradient-success ',
+            title: '출석',
+            value: '32',
+            delta: '',
+            deltaMessage: '',
+            isPositive: true,
+            isNegative: false,
+          }"
+        ></card>
+      </div>
+      <div class="col-3 mb-4">
+        <card
+          :data="{
+            icon: 'fa-solid fa-user-xmark',
+            iconColor: 'bg-gradient-danger ',
+            title: '미출석',
+            value: '17',
+            delta: '',
+            deltaMessage: '',
+            isPositive: true,
+            isNegative: false,
+          }"
+        ></card>
+      </div>
+      <div class="col-3 mb-4">
+        <card
+          :data="{
+            icon: 'fa-solid fa-user-plus',
+            iconColor: 'bg-gradient-warning ',
+            title: '신규',
+            value: '2',
+            delta: '',
+            deltaMessage: '',
+            isPositive: true,
+            isNegative: false,
+          }"
+        ></card>
+      </div>
+      <div class="col-3 mb-4">
+        <card
+          :data="{
+            icon: 'fa-solid fa-brake-warning',
+            iconColor: 'bg-gradient-danger ',
+            title: '상담 필요 학생',
+            value: '1',
+            delta: '',
+            deltaMessage: '',
+            isPositive: true,
+            isNegative: false,
+          }"
+        ></card>
       </div>
     </div>
-    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-      <div class="card">
-        <div class="card-body p-3">
-          <div class="row">
-            <div class="col-8">
-              <div class="numbers">
-                <p class="text-sm mb-0 text-uppercase font-weight-bold">New Clients</p>
-                <h5 class="font-weight-bolder">+3,462</h5>
-                <p class="mb-0">
-                  <span class="text-danger text-sm font-weight-bolder">-2%</span>
-                  since last quarter
-                </p>
-              </div>
-            </div>
-            <div class="col-4 text-end">
-              <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle">
-                <i class="ni ni-paper-diploma text-lg opacity-10" aria-hidden="true"></i>
-              </div>
-            </div>
-          </div>
+    <!-- Bottom panel -->
+    <div class="card flex-fill">
+      <div class="card-header p-3">
+        <div class="nav-wrapper position-relative end-0">
+          <ul class="nav nav-pills nav-fill p-1" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link mb-0 px-0 py-1 active" role="tab">1관</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mb-0 px-0 py-1" role="tab">2관</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mb-0 px-0 py-1" role="tab">3관</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mb-0 px-0 py-1" role="tab">미래관</a>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
-    <div class="col-xl-3 col-sm-6">
-      <div class="card">
-        <div class="card-body p-3">
-          <div class="row">
-            <div class="col-8">
-              <div class="numbers">
-                <p class="text-sm mb-0 text-uppercase font-weight-bold">Sales</p>
-                <h5 class="font-weight-bolder">$103,430</h5>
-                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5%</span> than last month</p>
-              </div>
-            </div>
-            <div class="col-4 text-end">
-              <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
-                <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-lg-7 mb-lg-0 mb-4">
-      <div class="card">
-        <div class="card-header pb-0 p-3">
-          <div class="d-flex justify-content-between">
-            <h6 class="mb-2">Sales by Country</h6>
-          </div>
-        </div>
-        <div class="table-responsive">
-          <table class="table align-items-center">
-            <tbody>
+      <div class="card-body d-flex flex-column pt-0 p-3">
+        <div class="d-flex flex-column flex-fill">
+          <table class="table table-sm table-borderless text-center h-100">
+            <thead>
               <tr>
-                <td class="w-30">
-                  <div class="d-flex px-2 py-1 align-items-center">
-                    <div>
-                      <img src="../assets/img/icons/flags/US.png" alt="Country flag" />
-                    </div>
-                    <div class="ms-4">
-                      <p class="text-xs font-weight-bold mb-0">Country:</p>
-                      <h6 class="text-sm mb-0">United States</h6>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="text-center">
-                    <p class="text-xs font-weight-bold mb-0">Sales:</p>
-                    <h6 class="text-sm mb-0">2500</h6>
-                  </div>
-                </td>
-                <td>
-                  <div class="text-center">
-                    <p class="text-xs font-weight-bold mb-0">Value:</p>
-                    <h6 class="text-sm mb-0">$230,900</h6>
-                  </div>
-                </td>
-                <td class="align-middle text-sm">
-                  <div class="col text-center">
-                    <p class="text-xs font-weight-bold mb-0">Bounce:</p>
-                    <h6 class="text-sm mb-0">29.9%</h6>
-                  </div>
-                </td>
+                <th scope="col"></th>
+                <th scope="col">1 강의실</th>
+                <th scope="col">2 강의실</th>
+                <th scope="col">3 강의실</th>
+                <th scope="col">4 강의실</th>
+                <th scope="col">5 강의실</th>
+                <th scope="col">6 강의실</th>
+                <th scope="col">7 강의실</th>
               </tr>
+            </thead>
+            <tbody class="flex-fill">
               <tr>
-                <td class="w-30">
-                  <div class="d-flex px-2 py-1 align-items-center">
-                    <div>
-                      <img src="../assets/img/icons/flags/DE.png" alt="Country flag" />
-                    </div>
-                    <div class="ms-4">
-                      <p class="text-xs font-weight-bold mb-0">Country:</p>
-                      <h6 class="text-sm mb-0">Germany</h6>
-                    </div>
+                <th class="position-relative text-end border" scope="row">
+                  <div class="h-100">
+                    <div class="position-absolute top-0 end-0 me-2">09:00</div>
+                    <div class="position-absolute top-50 end-0 translate-middle me-2">~</div>
+                    <div class="position-absolute bottom-0 end-0 me-2">13:00</div>
                   </div>
-                </td>
+                </th>
+                <td></td>
                 <td>
-                  <div class="text-center">
-                    <p class="text-xs font-weight-bold mb-0">Sales:</p>
-                    <h6 class="text-sm mb-0">3.900</h6>
+                  <div class="card border h-100">
+                    <div class="h6 text-start p-2 pb-0 mb-0">논술 특강</div>
+                    <div class="text-start ps-2">알렉스T</div>
                   </div>
                 </td>
+                <td></td>
+                <td></td>
+                <td></td>
                 <td>
-                  <div class="text-center">
-                    <p class="text-xs font-weight-bold mb-0">Value:</p>
-                    <h6 class="text-sm mb-0">$440,000</h6>
+                  <div class="card border h-100">
+                    <div class="h6 text-start p-2 pb-0 mb-0">보강</div>
+                    <div class="text-start ps-2">김보성T</div>
                   </div>
                 </td>
-                <td class="align-middle text-sm">
-                  <div class="col text-center">
-                    <p class="text-xs font-weight-bold mb-0">Bounce:</p>
-                    <h6 class="text-sm mb-0">40.22%</h6>
-                  </div>
-                </td>
+                <td></td>
               </tr>
+
               <tr>
-                <td class="w-30">
-                  <div class="d-flex px-2 py-1 align-items-center">
-                    <div>
-                      <img src="../assets/img/icons/flags/GB.png" alt="Country flag" />
-                    </div>
-                    <div class="ms-4">
-                      <p class="text-xs font-weight-bold mb-0">Country:</p>
-                      <h6 class="text-sm mb-0">Great Britain</h6>
-                    </div>
+                <th class="position-relative text-end border" scope="row">
+                  <div class="h-100">
+                    <div class="position-absolute top-0 end-0 me-2">13:30</div>
+                    <div class="position-absolute top-50 end-0 translate-middle me-2">~</div>
+                    <div class="position-absolute bottom-0 end-0 me-2">17:30</div>
+                  </div>
+                </th>
+                <td>
+                  <div class="card border h-100">
+                    <div class="h6 text-start p-2 pb-0 mb-0">미적분II</div>
+                    <div class="text-start ps-2">김국어T</div>
+                  </div>
+                </td>
+                <td></td>
+                <td>
+                  <div class="card border h-100">
+                    <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
+                    <div class="text-start ps-2">한미적T</div>
                   </div>
                 </td>
                 <td>
-                  <div class="text-center">
-                    <p class="text-xs font-weight-bold mb-0">Sales:</p>
-                    <h6 class="text-sm mb-0">1.400</h6>
+                  <div class="card border h-100">
+                    <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
+                    <div class="text-start ps-2">임확통T</div>
                   </div>
                 </td>
+                <td></td>
                 <td>
-                  <div class="text-center">
-                    <p class="text-xs font-weight-bold mb-0">Value:</p>
-                    <h6 class="text-sm mb-0">$190,700</h6>
+                  <div class="card border h-100">
+                    <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
+                    <div class="text-start ps-2">박기벡T</div>
                   </div>
                 </td>
-                <td class="align-middle text-sm">
-                  <div class="col text-center">
-                    <p class="text-xs font-weight-bold mb-0">Bounce:</p>
-                    <h6 class="text-sm mb-0">23.44%</h6>
-                  </div>
-                </td>
+                <td></td>
               </tr>
+
               <tr>
-                <td class="w-30">
-                  <div class="d-flex px-2 py-1 align-items-center">
-                    <div>
-                      <img src="../assets/img/icons/flags/BR.png" alt="Country flag" />
-                    </div>
-                    <div class="ms-4">
-                      <p class="text-xs font-weight-bold mb-0">Country:</p>
-                      <h6 class="text-sm mb-0">Brasil</h6>
-                    </div>
+                <th class="position-relative text-end border" scope="row">
+                  <div class="h-100">
+                    <div class="position-absolute top-0 end-0 me-2">18:00</div>
+                    <div class="position-absolute top-50 end-0 translate-middle me-2">~</div>
+                    <div class="position-absolute bottom-0 end-0 me-2">22:00</div>
+                  </div>
+                </th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                  <div class="card border h-100">
+                    <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
+                    <div class="text-start ps-2">김국어T</div>
                   </div>
                 </td>
                 <td>
-                  <div class="text-center">
-                    <p class="text-xs font-weight-bold mb-0">Sales:</p>
-                    <h6 class="text-sm mb-0">562</h6>
+                  <div class="card border h-100">
+                    <div class="h6 text-start p-2 pb-0 mb-0">국어</div>
+                    <div class="text-start ps-2">세종T</div>
                   </div>
                 </td>
+                <td></td>
                 <td>
-                  <div class="text-center">
-                    <p class="text-xs font-weight-bold mb-0">Value:</p>
-                    <h6 class="text-sm mb-0">$143,960</h6>
-                  </div>
-                </td>
-                <td class="align-middle text-sm">
-                  <div class="col text-center">
-                    <p class="text-xs font-weight-bold mb-0">Bounce:</p>
-                    <h6 class="text-sm mb-0">32.14%</h6>
+                  <div class="card border h-100">
+                    <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
+                    <div class="text-start ps-2">김국어T</div>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-5">
-      <div class="card">
-        <div class="card-header pb-0 p-3">
-          <h6 class="mb-0">Categories</h6>
-        </div>
-        <div class="card-body p-3">
-          <ul class="list-group">
-            <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-              <div class="d-flex align-items-center">
-                <div class="icon icon-shape icon-sm me-3 bg-gradient-dark shadow text-center">
-                  <i class="ni ni-mobile-button text-white opacity-10"></i>
-                </div>
-                <div class="d-flex flex-column">
-                  <h6 class="mb-1 text-dark text-sm">Devices</h6>
-                  <span class="text-xs">250 in stock, <span class="font-weight-bold">346+ sold</span></span>
-                </div>
-              </div>
-              <div class="d-flex">
-                <button class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
-                  <i class="ni ni-bold-right" aria-hidden="true"></i>
-                </button>
-              </div>
-            </li>
-            <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-              <div class="d-flex align-items-center">
-                <div class="icon icon-shape icon-sm me-3 bg-gradient-dark shadow text-center">
-                  <i class="ni ni-tag text-white opacity-10"></i>
-                </div>
-                <div class="d-flex flex-column">
-                  <h6 class="mb-1 text-dark text-sm">Tickets</h6>
-                  <span class="text-xs">123 closed, <span class="font-weight-bold">15 open</span></span>
-                </div>
-              </div>
-              <div class="d-flex">
-                <button class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
-                  <i class="ni ni-bold-right" aria-hidden="true"></i>
-                </button>
-              </div>
-            </li>
-            <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-              <div class="d-flex align-items-center">
-                <div class="icon icon-shape icon-sm me-3 bg-gradient-dark shadow text-center">
-                  <i class="ni ni-box-2 text-white opacity-10"></i>
-                </div>
-                <div class="d-flex flex-column">
-                  <h6 class="mb-1 text-dark text-sm">Error logs</h6>
-                  <span class="text-xs">1 is active, <span class="font-weight-bold">40 closed</span></span>
-                </div>
-              </div>
-              <div class="d-flex">
-                <button class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
-                  <i class="ni ni-bold-right" aria-hidden="true"></i>
-                </button>
-              </div>
-            </li>
-            <li class="list-group-item border-0 d-flex justify-content-between ps-0 border-radius-lg">
-              <div class="d-flex align-items-center">
-                <div class="icon icon-shape icon-sm me-3 bg-gradient-dark shadow text-center">
-                  <i class="ni ni-satisfied text-white opacity-10"></i>
-                </div>
-                <div class="d-flex flex-column">
-                  <h6 class="mb-1 text-dark text-sm">Happy users</h6>
-                  <span class="text-xs font-weight-bold">+ 430</span>
-                </div>
-              </div>
-              <div class="d-flex">
-                <button class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
-                  <i class="ni ni-bold-right" aria-hidden="true"></i>
-                </button>
-              </div>
-            </li>
-          </ul>
         </div>
       </div>
     </div>
@@ -301,8 +202,57 @@
 <script>
   import Card from "@/components/Card.vue";
   export default {
+    mounted() {
+      var total = document.querySelectorAll(".nav-pills");
+      function initNavs() {
+        total.forEach(function (l) {
+          var s = document.createElement("div"),
+            t = l.querySelector("li:first-child .nav-link").cloneNode();
+          (t.innerHTML = "-"), s.classList.add("moving-tab", "position-absolute", "nav-link"), s.appendChild(t), l.appendChild(s);
+          l.getElementsByTagName("li").length;
+          (s.style.padding = "0px"),
+            (s.style.width = l.querySelector("li:nth-child(1)").offsetWidth + "px"),
+            (s.style.transform = "translate3d(0px, 0px, 0px)"),
+            (s.style.transition = ".5s ease"),
+            (l.onmouseover = function (e) {
+              let t = getEventTarget(e),
+                i = t.closest("li");
+              if (i) {
+                let a = Array.from(i.closest("ul").children),
+                  n = a.indexOf(i) + 1;
+                l.querySelector("li:nth-child(" + n + ") .nav-link").onclick = function () {
+                  s = l.querySelector(".moving-tab");
+                  let e = 0;
+                  if (l.classList.contains("flex-column")) {
+                    for (var t = 1; t <= a.indexOf(i); t++) e += l.querySelector("li:nth-child(" + t + ")").offsetHeight;
+                    (s.style.transform = "translate3d(0px," + e + "px, 0px)"),
+                      (s.style.height = l.querySelector("li:nth-child(" + t + ")").offsetHeight);
+                  } else {
+                    for (t = 1; t <= a.indexOf(i); t++) e += l.querySelector("li:nth-child(" + t + ")").offsetWidth;
+                    (s.style.transform = "translate3d(" + e + "px, 0px, 0px)"),
+                      (s.style.width = l.querySelector("li:nth-child(" + n + ")").offsetWidth + "px");
+                  }
+                };
+              }
+            });
+        });
+      }
+      function getEventTarget(e) {
+        return (e = e || window.event).target || e.srcElement;
+      }
+      initNavs();
+    },
+    data() {
+      return {};
+    },
     components: {
       Card,
     },
   };
 </script>
+
+<style>
+  .main-panel {
+    height: 630px;
+  }
+</style>
