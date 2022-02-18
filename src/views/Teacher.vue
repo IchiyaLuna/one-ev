@@ -46,7 +46,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col-3">
-              <label class="form-label">학생 이름</label>
+              <label class="form-label">강사 이름</label>
               <div class="input-group">
                 <input
                   id="studentName"
@@ -124,11 +124,11 @@
           <div class="btn-group float-end" role="group">
             <button class="btn btn-sm btn-icon mb-0 btn-outline-danger" type="button">
               <span class="btn-inner--icon me-2"><i class="fa-solid fa-user-slash"></i></span>
-              <span class="btn-inner--text">학생 삭제</span>
+              <span class="btn-inner--text">강사 삭제</span>
             </button>
             <button class="btn btn-sm btn-icon mb-0 bg-gradient-success" type="button">
               <span class="btn-inner--icon me-2"><i class="fa-solid fa-user-plus"></i></span>
-              <span class="btn-inner--text">학생 추가</span>
+              <span class="btn-inner--text">강사 추가</span>
             </button>
           </div>
         </div>
@@ -142,7 +142,7 @@
                 <router-link class="nav-link mb-0 px-0 py-1 active" to="/student/timeline" role="tab">시간표</router-link>
               </li>
               <li class="nav-item">
-                <router-link class="nav-link mb-0 px-0 py-1" to="/student/consult" role="tab">상담 기록</router-link>
+                <router-link class="nav-link mb-0 px-0 py-1" to="/student/consult" role="tab">수강생</router-link>
               </li>
             </ul>
           </div>

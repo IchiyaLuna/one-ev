@@ -112,90 +112,58 @@
       <div class="card">
         <div class="card-body">
           <div class="row">
-            <div class="col-3">
-              <label class="form-label">학생 이름</label>
+            <div class="col-6">
+              <label class="form-label">강의명</label>
               <div class="input-group">
                 <input
                   id="studentName"
                   name="studentName"
                   class="form-control"
                   type="text"
-                  placeholder="이름"
+                  placeholder="강의명"
                   required="required"
                   onfocus="focused(this)"
                   onfocusout="defocused(this)"
                 />
               </div>
             </div>
-            <div class="col-3">
-              <label class="form-label">성별</label>
+            <div class="col-6">
+              <label class="form-label">강사</label>
               <div class="input-group">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="genderRadio" id="male" />
-                  <label class="custom-control-label" for="male">남</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="genderRadio" id="female" />
-                  <label class="custom-control-label" for="female">여</label>
-                </div>
-              </div>
-            </div>
-            <div class="col-3">
-              <label class="form-label">학생 핸드폰</label>
-              <div class="input-group">
-                <input
-                  id="studentPhone"
-                  name="studentPhone"
-                  class="form-control"
-                  type="text"
-                  placeholder="01012345678"
-                  required="required"
-                  onfocus="focused(this)"
-                  onfocusout="defocused(this)"
-                />
-              </div>
-            </div>
-            <div class="col-3">
-              <label class="form-label">학부모 핸드폰</label>
-              <div class="input-group">
-                <input
-                  id="parentPhone"
-                  name="parentPhone"
-                  class="form-control"
-                  type="text"
-                  placeholder="01012345678"
-                  required="required"
-                  onfocus="focused(this)"
-                  onfocusout="defocused(this)"
-                />
+                <select class="form-control" name="choices-button" id="choices-button" placeholder="Departure">
+                  <option value="Choice 1" selected="">김소월</option>
+                  <option value="Choice 2">김수학</option>
+                  <option value="Choice 3">이방원</option>
+                  <option value="Choice 4">박세종</option>
+                </select>
               </div>
             </div>
           </div>
           <div class="row">
-            <div class="col-3">
-              <label class="form-label">학교</label>
-              <div class="input-group">
-                <input
-                  id="school"
-                  name="school"
-                  class="form-control"
-                  type="text"
-                  placeholder="학교"
-                  required="required"
-                  onfocus="focused(this)"
-                  onfocusout="defocused(this)"
-                />
+            <div class="col-6">
+              <label class="form-label">강의실</label>
+              <select class="form-control" name="choices-button" id="choices-button" placeholder="Departure">
+                <option value="Choice 1" selected="">1관 - 1강의실</option>
+                <option value="Choice 2">1관 - 2강의실</option>
+                <option value="Choice 3">1관 - 3강의실</option>
+                <option value="Choice 4">1관 - 4강의실</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="example-number-input" class="form-control-label">정원</label>
+                <input class="form-control" type="number" value="6" id="example-number-input" />
               </div>
             </div>
           </div>
           <div class="btn-group float-end" role="group">
             <button class="btn btn-sm btn-icon mb-0 btn-outline-danger" type="button">
-              <span class="btn-inner--icon me-2"><i class="fa-solid fa-user-slash"></i></span>
-              <span class="btn-inner--text">학생 삭제</span>
+              <span class="btn-inner--icon me-2"><i class="fa-solid fa-trash-can"></i></span>
+              <span class="btn-inner--text">수업 삭제</span>
             </button>
             <button class="btn btn-sm btn-icon mb-0 bg-gradient-success" type="button">
-              <span class="btn-inner--icon me-2"><i class="fa-solid fa-user-plus"></i></span>
-              <span class="btn-inner--text">학생 추가</span>
+              <span class="btn-inner--icon me-2"><i class="fa-solid fa-plus"></i></span>
+              <span class="btn-inner--text">수업 추가</span>
             </button>
           </div>
         </div>
@@ -222,8 +190,8 @@
           </table>
           <div class="bottomPanel d-flex justify-content-end pt-2 pb-2">
             <button class="text-nowrap btn btn-sm btn-icon bg-gradient-success mb-0" type="button">
-              <span class="btn-inner--icon me-2"><i class="fa-solid fa-file-circle-plus"></i></span>
-              <span class="btn-inner--text">새 상담 추가</span>
+              <span class="btn-inner--icon me-2"><i class="fa-solid fa-user-plus"></i></span>
+              <span class="btn-inner--text">새 학생 추가</span>
             </button>
           </div>
         </div>

@@ -24,7 +24,7 @@
           <td></td>
           <td>
             <div class="card border h-100">
-              <div class="h6 text-start p-2 pb-0 mb-0">논술 특강</div>
+              <div class="h6 text-start ps-2 mb-0">논술 특강</div>
               <div class="text-start ps-2">알렉스T</div>
             </div>
           </td>
@@ -33,7 +33,7 @@
           <td></td>
           <td>
             <div class="card border h-100">
-              <div class="h6 text-start p-2 pb-0 mb-0">보강</div>
+              <div class="h6 text-start ps-2 mb-0">보강</div>
               <div class="text-start ps-2">김보성T</div>
             </div>
           </td>
@@ -49,27 +49,27 @@
           </th>
           <td>
             <div class="card border h-100">
-              <div class="h6 text-start p-2 pb-0 mb-0">미적분II</div>
+              <div class="h6 text-start ps-2 mb-0">미적분II</div>
               <div class="text-start ps-2">김국어T</div>
             </div>
           </td>
           <td></td>
           <td>
             <div class="card border h-100">
-              <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
+              <div class="h6 text-start ps-2 mb-0">수학</div>
               <div class="text-start ps-2">한미적T</div>
             </div>
           </td>
           <td>
             <div class="card border h-100">
-              <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
+              <div class="h6 text-start ps-2 mb-0">수학</div>
               <div class="text-start ps-2">임확통T</div>
             </div>
           </td>
           <td></td>
           <td>
             <div class="card border h-100">
-              <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
+              <div class="h6 text-start ps-2 mb-0">수학</div>
               <div class="text-start ps-2">박기벡T</div>
             </div>
           </td>
@@ -88,13 +88,13 @@
           <td></td>
           <td>
             <div class="card border h-100">
-              <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
+              <div class="h6 text-start ps-2 mb-0">수학</div>
               <div class="text-start ps-2">김국어T</div>
             </div>
           </td>
           <td>
             <div class="card border h-100">
-              <div class="h6 text-start p-2 pb-0 mb-0">국어</div>
+              <div class="h6 text-start ps-2 mb-0">국어</div>
               <div class="text-start ps-2">세종T</div>
             </div>
           </td>
