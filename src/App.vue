@@ -7,7 +7,7 @@
     data() {
       return {
         routeData: {
-          rootMenu: ["home", "student", "class", "teacher", "academy"],
+          rootMenu: ["home", "student", "consult", "class", "teacher", "academy"],
           home: {
             name: "Home",
             icon: "fa-regular fa-house ",
@@ -22,9 +22,14 @@
                 path: "timeline",
               },
               {
-                path: "/consult",
+                path: "/consult-history",
               },
             ],
+          },
+          consult: {
+            name: "상담 관리",
+            icon:"fa-solid fa-clipboard-check",
+            path:"/consult",
           },
           class: {
             name: "수업 관리",

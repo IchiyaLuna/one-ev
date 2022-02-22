@@ -1,4 +1,5 @@
-<template><div class="card shadow-lg mx-4 card-profile-bottom">
+<template>
+<div class="card shadow-lg mx-4 card-profile-bottom">
       <div class="card-body p-3">
         <div class="row gx-4">
           <div class="col-auto">
@@ -41,5 +42,4 @@
             </div>
           </div>
         </div>
-      </div>
-    </div></template>
+</template>

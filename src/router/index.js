@@ -4,12 +4,13 @@ import MainLayout from "@/layouts/MainLayout.vue";
 
 import Home from "@/views/Home.vue";
 import Student from "@/views/Student.vue";
+import Consult from "@/views/Consult.vue";
 import Class from "@/views/Class.vue";
 import Teacher from "@/views/Teacher.vue";
 import Academy from "@/views/Academy.vue";
 
 import Timeline from "@/components/Timeline.vue";
-import Consult from "@/components/Consult.vue";
+import ConsultHistory from "@/components/ConsultHistory.vue";
 
 const routes = [
   {
@@ -34,11 +35,17 @@ const routes = [
             components: { studentRouter: Timeline },
           },
           {
-            path: "/student/consult",
-            name: "consult",
-            components: { studentRouter: Consult },
+            path: "/student/consult-history",
+            name: "consult-history",
+            components: { studentRouter: ConsultHistory },
           },
         ],
+      },
+      {
+        path: "/consult",
+        name: "consult",
+        components: { default: Consult }, 
+
       },
       {
         path: "/class",

@@ -263,7 +263,7 @@
                 <router-link class="nav-link mb-0 px-0 py-1 active" to="/student/timeline" role="tab">시간표</router-link>
               </li>
               <li class="nav-item">
-                <router-link class="nav-link mb-0 px-0 py-1" to="/student/consult" role="tab">상담 기록</router-link>
+                <router-link class="nav-link mb-0 px-0 py-1" to="/student/consult-history" role="tab">상담 기록</router-link>
               </li>
             </ul>
           </div>
