@@ -1,5 +1,7 @@
 {
   "name": "one-ev",
+  "description": "Academy management - ONE",
+  "author": "LunaBi",
   "version": "0.0.1",
   "private": true,
   "scripts": {
