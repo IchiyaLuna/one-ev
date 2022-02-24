@@ -1,6 +1,6 @@
 <template>
   <!-- Background -->
-  <div class="min-height-300 bg-primary position-absolute w-100"></div>
+  <div class="min-height-300 bg-gradient-primary position-absolute w-100"></div>
   <!-- Sidebar -->
   <sidebar>
     <template v-slot:links>
@@ -76,3 +76,8 @@
     },
   };
 </script>
+<style lang="scss">
+  .main-panel {
+    height: 630px;
+  }
+</style>

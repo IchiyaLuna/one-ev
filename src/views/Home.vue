@@ -4,7 +4,7 @@
     <!-- Top panel -->
     <div class="row">
       <div class="col-3 mb-4">
-        <card
+        <info-card
           :data="{
             icon: 'fa-solid fa-user-check',
             iconColor: 'bg-gradient-success ',
@@ -15,10 +15,10 @@
             isPositive: true,
             isNegative: false,
           }"
-        ></card>
+        ></info-card>
       </div>
       <div class="col-3 mb-4">
-        <card
+        <info-card
           :data="{
             icon: 'fa-solid fa-user-xmark',
             iconColor: 'bg-gradient-danger ',
@@ -29,10 +29,10 @@
             isPositive: true,
             isNegative: false,
           }"
-        ></card>
+        ></info-card>
       </div>
       <div class="col-3 mb-4">
-        <card
+        <info-card
           :data="{
             icon: 'fa-solid fa-user-plus',
             iconColor: 'bg-gradient-warning ',
@@ -43,10 +43,10 @@
             isPositive: true,
             isNegative: false,
           }"
-        ></card>
+        ></info-card>
       </div>
       <div class="col-3 mb-4">
-        <card
+        <info-card
           :data="{
             icon: 'fa-solid fa-brake-warning',
             iconColor: 'bg-gradient-danger ',
@@ -57,7 +57,7 @@
             isPositive: true,
             isNegative: false,
           }"
-        ></card>
+        ></info-card>
       </div>
     </div>
     <!-- Bottom panel -->
@@ -200,7 +200,7 @@
 </template>
 
 <script>
-  import Card from "@/components/Card.vue";
+  import InfoCard from "@/components/InfoCard.vue";
   export default {
     mounted() {
       var total = document.querySelectorAll(".nav-pills");
@@ -246,13 +246,7 @@
       return {};
     },
     components: {
-      Card,
+      InfoCard,
     },
   };
 </script>
-
-<style>
-  .main-panel {
-    height: 630px;
-  }
-</style>

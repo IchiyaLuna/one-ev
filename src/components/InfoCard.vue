@@ -34,7 +34,7 @@
 
 <script>
   export default {
-    name: "card",
+    name: "info-card",
     props: {
       data: {
         type: Object,
@@ -50,7 +50,7 @@
             deltaMessage: "",
           };
         },
-        description: "Card data",
+        description: "Info card data",
       },
     },
   };
