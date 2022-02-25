@@ -352,10 +352,6 @@
 </script>
 
 <style>
-  .main-panel {
-    height: 630px;
-  }
-
   tbody tr.selected {
     color: rgb(27, 27, 27) !important;
     background-color: #e1ecf7 !important;

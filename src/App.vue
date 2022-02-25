@@ -28,8 +28,8 @@
           },
           consult: {
             name: "상담 관리",
-            icon:"fa-solid fa-clipboard-check",
-            path:"/consult",
+            icon: "fa-regular fa-clipboard-check",
+            path: "/consult",
           },
           class: {
             name: "수업 관리",
