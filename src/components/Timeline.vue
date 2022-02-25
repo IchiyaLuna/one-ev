@@ -23,7 +23,7 @@
           </th>
           <td></td>
           <td>
-            <div class="card border h-100" draggable="true">
+            <div class="card border h-100">
               <div class="h6 text-start ps-2 mb-0">논술 특강</div>
               <div class="text-start ps-2">알렉스T</div>
             </div>

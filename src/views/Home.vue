@@ -86,109 +86,31 @@
             <thead>
               <tr>
                 <th scope="col"></th>
-                <th scope="col">1 강의실</th>
-                <th scope="col">2 강의실</th>
-                <th scope="col">3 강의실</th>
-                <th scope="col">4 강의실</th>
-                <th scope="col">5 강의실</th>
-                <th scope="col">6 강의실</th>
-                <th scope="col">7 강의실</th>
+                <th v-for="classroom in this.classrooms" :key="classroom" scope="col">{{ classroom }}</th>
               </tr>
             </thead>
-            <tbody class="flex-fill">
-              <tr>
+            <tbody>
+              <tr v-for="(timeObject, timeIndex) in this.times" :key="timeIndex">
                 <th class="position-relative text-end border" scope="row">
                   <div class="h-100">
-                    <div class="position-absolute top-0 end-0 me-2">09:00</div>
+                    <div class="position-absolute top-0 end-0 me-2">{{ timeObject[0] }}</div>
                     <div class="position-absolute top-50 end-0 translate-middle me-2">~</div>
-                    <div class="position-absolute bottom-0 end-0 me-2">13:00</div>
+                    <div class="position-absolute bottom-0 end-0 me-2">{{ timeObject[1] }}</div>
                   </div>
                 </th>
-                <td></td>
-                <td>
-                  <div class="card border h-100">
-                    <div class="h6 text-start p-2 pb-0 mb-0">논술 특강</div>
-                    <div class="text-start ps-2">알렉스T</div>
-                  </div>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                  <div class="card border h-100">
-                    <div class="h6 text-start p-2 pb-0 mb-0">보강</div>
-                    <div class="text-start ps-2">김보성T</div>
-                  </div>
-                </td>
-                <td></td>
-              </tr>
-
-              <tr>
-                <th class="position-relative text-end border" scope="row">
-                  <div class="h-100">
-                    <div class="position-absolute top-0 end-0 me-2">13:30</div>
-                    <div class="position-absolute top-50 end-0 translate-middle me-2">~</div>
-                    <div class="position-absolute bottom-0 end-0 me-2">17:30</div>
-                  </div>
-                </th>
-                <td>
-                  <div class="card border h-100">
-                    <div class="h6 text-start p-2 pb-0 mb-0">미적분II</div>
-                    <div class="text-start ps-2">김국어T</div>
-                  </div>
-                </td>
-                <td></td>
-                <td>
-                  <div class="card border h-100">
-                    <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
-                    <div class="text-start ps-2">한미적T</div>
-                  </div>
-                </td>
-                <td>
-                  <div class="card border h-100">
-                    <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
-                    <div class="text-start ps-2">임확통T</div>
-                  </div>
-                </td>
-                <td></td>
-                <td>
-                  <div class="card border h-100">
-                    <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
-                    <div class="text-start ps-2">박기벡T</div>
-                  </div>
-                </td>
-                <td></td>
-              </tr>
-
-              <tr>
-                <th class="position-relative text-end border" scope="row">
-                  <div class="h-100">
-                    <div class="position-absolute top-0 end-0 me-2">18:00</div>
-                    <div class="position-absolute top-50 end-0 translate-middle me-2">~</div>
-                    <div class="position-absolute bottom-0 end-0 me-2">22:00</div>
-                  </div>
-                </th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                  <div class="card border h-100">
-                    <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
-                    <div class="text-start ps-2">김국어T</div>
-                  </div>
-                </td>
-                <td>
-                  <div class="card border h-100">
-                    <div class="h6 text-start p-2 pb-0 mb-0">국어</div>
-                    <div class="text-start ps-2">세종T</div>
-                  </div>
-                </td>
-                <td></td>
-                <td>
-                  <div class="card border h-100">
-                    <div class="h6 text-start p-2 pb-0 mb-0">수학</div>
-                    <div class="text-start ps-2">김국어T</div>
-                  </div>
+                <td
+                  v-for="(classroomNum, classroomIndex) in this.classrooms.length"
+                  :key="classroomIndex"
+                  @drop="onDrop($event, timeIndex, classroomIndex)"
+                  @dragover="onOver($event, timeIndex, classroomIndex)"
+                  @dragenter.prevent
+                >
+                  <class-card
+                    class="draggable-card"
+                    v-if="checkIndex(timeIndex, classroomIndex)"
+                    @dragstart="startDrag($event, this.items[getIndex(timeIndex, classroomIndex)])"
+                    :data="this.items[getIndex(timeIndex, classroomIndex)]"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -201,7 +123,86 @@
 
 <script>
   import InfoCard from "@/components/InfoCard.vue";
+  import ClassCard from "@/components/ClassCard.vue";
+
   export default {
+    data() {
+      return {
+        currentDragId: -1,
+        currentOverPosition: {
+          time: -1,
+          classroom: -1,
+        },
+        classrooms: ["1강의실", "2강의실", "3강의실", "4강의실", "5강의실", "6강의실", "7강의실"],
+        times: [
+          ["09:00", "13:00"],
+          ["13:30", "17:30"],
+          ["18:00", "22:00"],
+        ],
+        items: [
+          {
+            id: 0,
+            classroom: 2,
+            time: 0,
+            class: "미적분",
+            teacher: "김국어",
+          },
+          {
+            id: 1,
+            classroom: 4,
+            time: 1,
+            class: "국어",
+            teacher: "이세종",
+          },
+          {
+            id: 2,
+            classroom: 5,
+            time: 2,
+            class: "사회",
+            teacher: "마르크스",
+          },
+        ],
+      };
+    },
+    computed: {},
+    methods: {
+      checkIndex(time, classroom) {
+        var index = this.items.findIndex((x) => x.time === time && x.classroom === classroom);
+        return index !== -1;
+      },
+      getIndex(time, classroom) {
+        return this.items.findIndex((x) => x.time === time && x.classroom === classroom);
+      },
+      isVisible(index) {
+        return this.items[index].visible;
+      },
+      startDrag(event, item) {
+        event.dataTransfer.dropEffect = "move";
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("itemID", item.id);
+        this.currentDragId = item.id;
+      },
+      endDrag() {},
+      onDrop(event, time, classroom) {
+        let id = event.dataTransfer.getData("itemID");
+        let item = this.items.find((x) => x.id == id);
+        item.time = time;
+        item.classroom = classroom;
+        this.currentDragId = -1;
+      },
+      onOver(event, time, classroom) {
+        event.preventDefault();
+        if (this.currentOverPosition.time !== time || this.currentOverPosition.classroom !== classroom) {
+          this.currentOverPosition.time = time;
+          this.currentOverPosition.classroom = classroom;
+        } else {
+          return;
+        }
+        let item = this.items.find((x) => x.id == this.currentDragId);
+        item.time = time;
+        item.classroom = classroom;
+      },
+    },
     mounted() {
       var total = document.querySelectorAll(".nav-pills");
       function initNavs() {
@@ -242,11 +243,15 @@
       }
       initNavs();
     },
-    data() {
-      return {};
-    },
     components: {
       InfoCard,
+      ClassCard,
     },
   };
 </script>
+
+<style>
+  .draggable-card {
+    transform: translate(0, 0);
+  }
+</style>
