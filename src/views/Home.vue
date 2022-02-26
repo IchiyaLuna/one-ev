@@ -74,10 +74,16 @@
                 <th v-for="classroom in this.classrooms" :key="classroom" scope="col">{{ classroom }}</th>
               </tr>
             </thead>
-            <tbody>
-              <tr v-for="(timeObject, timeIndex) in this.times" :key="timeIndex">
+            <tbody ref="timetablebody">
+              <tr
+                v-for="(timeObject, timeIndex) in this.times"
+                :key="timeIndex"
+                :style="{
+                  height: this.rowHeight + 'px',
+                }"
+              >
                 <th class="position-relative text-end border" scope="row">
-                  <div class="h-100">
+                  <div>
                     <div class="position-absolute top-0 end-0 me-2">{{ timeObject[0] }}</div>
                     <div class="position-absolute top-50 end-0 translate-middle me-2">~</div>
                     <div class="position-absolute bottom-0 end-0 me-2">{{ timeObject[1] }}</div>
@@ -92,6 +98,7 @@
                 >
                   <class-card
                     class="draggable-card"
+                    :class="this.items[getIndex(timeIndex, classroomIndex)].isPreview ? 'opacity-50' : ''"
                     v-if="checkIndex(timeIndex, classroomIndex)"
                     @dragstart="startDrag($event, this.items[getIndex(timeIndex, classroomIndex)])"
                     :data="this.items[getIndex(timeIndex, classroomIndex)]"
@@ -119,6 +126,7 @@
     },
     data() {
       return {
+        timetableHeight: 0,
         currentDragId: -1,
         currentOverPosition: {
           time: -1,
@@ -133,6 +141,8 @@
         ],
         items: [
           {
+            isPreview: false,
+            isHidden: false,
             id: 0,
             classroom: 2,
             time: 0,
@@ -140,6 +150,8 @@
             teacher: "김국어",
           },
           {
+            isPreview: false,
+            isHidden: false,
             id: 1,
             classroom: 4,
             time: 1,
@@ -147,6 +159,8 @@
             teacher: "이세종",
           },
           {
+            isPreview: false,
+            isHidden: false,
             id: 2,
             classroom: 5,
             time: 2,
@@ -156,17 +170,46 @@
         ],
       };
     },
-    computed: {},
+    computed: {
+      rowHeight() {
+        return Math.floor(this.timetableHeight / this.times.length) - 8;
+      },
+    },
     methods: {
-      checkIndex(time, classroom) {
-        var index = this.items.findIndex((x) => x.time === time && x.classroom === classroom);
-        return index !== -1;
-      },
       getIndex(time, classroom) {
-        return this.items.findIndex((x) => x.time === time && x.classroom === classroom);
+        return this.items.findIndex((x) => !x.isHidden && x.time === time && x.classroom === classroom);
       },
-      isVisible(index) {
-        return this.items[index].visible;
+      checkIndex(time, classroom) {
+        return this.getIndex(time, classroom) !== -1;
+      },
+      clearPreview() {
+        const previews = [];
+        let offset = 0;
+
+        let index = this.items.findIndex((x) => x.isPreview);
+
+        while (index !== -1) {
+          previews.push(index);
+          index = this.items.findIndex((x, i) => i > index && x.isPreview);
+        }
+
+        for (let index of previews) {
+          this.items.splice(index - offset, 1);
+          offset++;
+        }
+      },
+      restoreHidden() {
+        const hiddens = [];
+        let index = this.items.findIndex((x) => x.isHidden);
+
+        while (index !== -1) {
+          hiddens.push(index);
+          index = this.items.findIndex((x, i) => i > index && x.isHidden);
+        }
+
+        for (let index of hiddens) {
+          this.items[index].isHidden = false;
+        }
       },
       startDrag(event, item) {
         event.dataTransfer.dropEffect = "move";
@@ -177,22 +220,69 @@
       endDrag() {},
       onDrop(event, time, classroom) {
         let id = event.dataTransfer.getData("itemID");
-        let item = this.items.find((x) => x.id == id);
+        const item = this.items.find((x) => x.id == id);
+
         item.time = time;
         item.classroom = classroom;
         this.currentDragId = -1;
+        this.currentOverPosition.time = -1;
+        this.currentOverPosition.classroom = -1;
+        this.clearPreview();
+        this.restoreHidden();
       },
       onOver(event, time, classroom) {
+        if (this.currentDragId === -1) return;
+
         event.preventDefault();
+
         if (this.currentOverPosition.time !== time || this.currentOverPosition.classroom !== classroom) {
           this.currentOverPosition.time = time;
           this.currentOverPosition.classroom = classroom;
+        } else return;
+
+        this.clearPreview();
+        this.restoreHidden();
+
+        const draggingItem = this.items.find((x) => x.id == this.currentDragId);
+        const draggingTime = draggingItem.time;
+        const draggingClassroom = draggingItem.classroom;
+
+        if (this.checkIndex(time, classroom) && !(time === draggingTime && classroom === draggingClassroom)) {
+          const presentItem = this.items[this.getIndex(time, classroom)];
+
+          //Set dragging item to hidden
+          draggingItem.isHidden = true;
+          //Set present item to hidden
+          presentItem.isHidden = true;
+
+          //Push current dragging item to present place
+          this.items.push({
+            isPreview: true,
+            isHidden: false,
+            time: time,
+            classroom: classroom,
+            class: draggingItem.class,
+            teacher: draggingItem.teacher,
+          });
+          //Push present item to origin place
+          this.items.push({
+            isPreview: true,
+            isHidden: false,
+            time: draggingItem.time,
+            classroom: draggingItem.classroom,
+            class: presentItem.class,
+            teacher: presentItem.teacher,
+          });
         } else {
-          return;
+          this.items.push({
+            isPreview: true,
+            isHidden: false,
+            time: time,
+            classroom: classroom,
+            class: draggingItem.class,
+            teacher: draggingItem.teacher,
+          });
         }
-        let item = this.items.find((x) => x.id == this.currentDragId);
-        item.time = time;
-        item.classroom = classroom;
       },
     },
     mounted() {
@@ -202,6 +292,9 @@
 </script>
 
 <style>
+  .opacity-50 {
+    opacity: 0.5;
+  }
   .draggable-card {
     transform: translate(0, 0);
   }
