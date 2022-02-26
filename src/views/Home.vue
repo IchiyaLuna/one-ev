@@ -109,8 +109,14 @@
 <script>
   import InfoCard from "@/components/InfoCard.vue";
   import ClassCard from "@/components/ClassCard.vue";
+  import NavSlider from "@/components/NavSlider.vue";
 
   export default {
+    components: {
+      InfoCard,
+      ClassCard,
+      NavSlider,
+    },
     data() {
       return {
         currentDragId: -1,
@@ -118,6 +124,7 @@
           time: -1,
           classroom: -1,
         },
+        halls: ["1관", "2관"],
         classrooms: ["1강의실", "2강의실", "3강의실", "4강의실", "5강의실", "6강의실", "7강의실"],
         times: [
           ["09:00", "13:00"],
