@@ -63,22 +63,7 @@
     <!-- Bottom panel -->
     <div class="card flex-fill">
       <div class="card-header p-3">
-        <div class="nav-wrapper position-relative end-0">
-          <ul class="nav nav-pills nav-fill p-1" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link mb-0 px-0 py-1 active" role="tab">1관</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mb-0 px-0 py-1" role="tab">2관</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mb-0 px-0 py-1" role="tab">3관</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mb-0 px-0 py-1" role="tab">미래관</a>
-            </li>
-          </ul>
-        </div>
+        <nav-slider :items="this.halls" />
       </div>
       <div class="card-body d-flex flex-column pt-0 p-3">
         <div class="d-flex flex-column flex-fill">
