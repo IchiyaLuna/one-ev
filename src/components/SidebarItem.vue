@@ -1,6 +1,6 @@
 <template>
   <li class="nav-item">
-    <router-link class="nav-link" :to="link.path">
+    <router-link class="nav-link" :to="link.path" draggable="false">
       <div class="icon icon-shape icon-sm text-center me-2 top-0 d-flex align-items-center justify-content-center">
         <i class="text-primary text-lg top-0 opacity-10" :class="link.icon"></i>
       </div>
