@@ -92,16 +92,21 @@
                 <td
                   v-for="(classroomNum, classroomIndex) in this.classrooms.length"
                   :key="classroomIndex"
-                  @drop="onDrop($event, timeIndex, classroomIndex)"
+                  @drop="onDrop(timeIndex, classroomIndex)"
                   @dragover="onOver($event, timeIndex, classroomIndex)"
                   @dragenter.prevent
                 >
                   <class-card
-                    class="draggable-card"
-                    :class="this.items[getIndex(timeIndex, classroomIndex)].isPreview ? 'opacity-50' : ''"
-                    v-if="checkIndex(timeIndex, classroomIndex)"
-                    @dragstart="startDrag($event, this.items[getIndex(timeIndex, classroomIndex)])"
-                    :data="this.items[getIndex(timeIndex, classroomIndex)]"
+                    class="draggable-card opacity-50"
+                    v-if="checkPreview(timeIndex, classroomIndex)"
+                    :data="getPreview(timeIndex, classroomIndex)"
+                  />
+                  <class-card
+                    class="draggable-card a"
+                    v-else-if="checkIndex(timeIndex, classroomIndex)"
+                    @dragstart="startDrag($event, getItem(timeIndex, classroomIndex))"
+                    @dragend="endDrag()"
+                    :data="getItem(timeIndex, classroomIndex)"
                   />
                 </td>
               </tr>
@@ -132,6 +137,7 @@
           time: -1,
           classroom: -1,
         },
+        previews: [],
         halls: ["1관", "2관"],
         classrooms: ["1강의실", "2강의실", "3강의실", "4강의실", "5강의실", "6강의실", "7강의실"],
         times: [
@@ -141,7 +147,6 @@
         ],
         items: [
           {
-            isPreview: false,
             isHidden: false,
             id: 0,
             classroom: 2,
@@ -150,7 +155,6 @@
             teacher: "김국어",
           },
           {
-            isPreview: false,
             isHidden: false,
             id: 1,
             classroom: 4,
@@ -159,7 +163,6 @@
             teacher: "이세종",
           },
           {
-            isPreview: false,
             isHidden: false,
             id: 2,
             classroom: 5,
@@ -182,21 +185,17 @@
       checkIndex(time, classroom) {
         return this.getIndex(time, classroom) !== -1;
       },
+      getItem(time, classroom) {
+        return this.items.find((x) => x.time === time && x.classroom === classroom);
+      },
+      checkPreview(time, classroom) {
+        return this.previews.findIndex((x) => x.time === time && x.classroom === classroom) !== -1;
+      },
+      getPreview(time, classroom) {
+        return this.previews.find((x) => x.time === time && x.classroom === classroom);
+      },
       clearPreview() {
-        const previews = [];
-        let offset = 0;
-
-        let index = this.items.findIndex((x) => x.isPreview);
-
-        while (index !== -1) {
-          previews.push(index);
-          index = this.items.findIndex((x, i) => i > index && x.isPreview);
-        }
-
-        for (let index of previews) {
-          this.items.splice(index - offset, 1);
-          offset++;
-        }
+        this.previews.splice(0, this.previews.length);
       },
       restoreHidden() {
         const hiddens = [];
@@ -214,21 +213,30 @@
       startDrag(event, item) {
         event.dataTransfer.dropEffect = "move";
         event.dataTransfer.effectAllowed = "move";
-        event.dataTransfer.setData("itemID", item.id);
         this.currentDragId = item.id;
       },
-      endDrag() {},
-      onDrop(event, time, classroom) {
-        let id = event.dataTransfer.getData("itemID");
-        const item = this.items.find((x) => x.id == id);
-
-        item.time = time;
-        item.classroom = classroom;
+      endDrag() {
         this.currentDragId = -1;
         this.currentOverPosition.time = -1;
         this.currentOverPosition.classroom = -1;
+
         this.clearPreview();
         this.restoreHidden();
+      },
+      onDrop(time, classroom) {
+        if (this.currentDragId === -1) return;
+
+        const item = this.items.find((x) => x.id === this.currentDragId);
+
+        if (this.checkIndex(time, classroom)) {
+          const presentItem = this.getItem(time, classroom);
+
+          presentItem.time = item.time;
+          presentItem.classroom = item.classroom;
+        }
+
+        item.time = time;
+        item.classroom = classroom;
       },
       onOver(event, time, classroom) {
         if (this.currentDragId === -1) return;
@@ -247,36 +255,27 @@
         const draggingTime = draggingItem.time;
         const draggingClassroom = draggingItem.classroom;
 
-        if (this.checkIndex(time, classroom) && !(time === draggingTime && classroom === draggingClassroom)) {
-          const presentItem = this.items[this.getIndex(time, classroom)];
+        if (time === draggingTime && classroom === draggingClassroom) return;
 
-          //Set dragging item to hidden
-          draggingItem.isHidden = true;
-          //Set present item to hidden
-          presentItem.isHidden = true;
+        if (this.checkIndex(time, classroom)) {
+          const presentItem = this.getItem(time, classroom);
 
           //Push current dragging item to present place
-          this.items.push({
-            isPreview: true,
-            isHidden: false,
+          this.previews.push({
             time: time,
             classroom: classroom,
             class: draggingItem.class,
             teacher: draggingItem.teacher,
           });
           //Push present item to origin place
-          this.items.push({
-            isPreview: true,
-            isHidden: false,
+          this.previews.push({
             time: draggingItem.time,
             classroom: draggingItem.classroom,
             class: presentItem.class,
             teacher: presentItem.teacher,
           });
         } else {
-          this.items.push({
-            isPreview: true,
-            isHidden: false,
+          this.previews.push({
             time: time,
             classroom: classroom,
             class: draggingItem.class,
