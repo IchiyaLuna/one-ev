@@ -16,7 +16,7 @@
     </template>
   </sidebar>
   <!-- Main box -->
-  <main class="main-content position-relative border-radius-lg">
+  <main class="main-content position-relative d-flex flex-column h-100 border-radius-lg">
     <!-- Navbar -->
     <navbar
       :navData="{
@@ -26,7 +26,7 @@
     />
     <!-- End Navbar -->
     <!-- Main Container -->
-    <div class="container-fluid py-4">
+    <div class="container-fluid d-flex flex-column flex-fill pb-3">
       <!-- Content router -->
       <router-view></router-view>
       <!-- Footer -->
@@ -78,6 +78,6 @@
 </script>
 <style lang="scss">
   .main-panel {
-    height: 740px;
+    height: 720px;
   }
 </style>

@@ -73,6 +73,10 @@
     user-select: none;
   }
 
+  .app-screen {
+    height: 100%;
+  }
+
   #app {
     font-family: "Noto Sans KR" !important;
   }
