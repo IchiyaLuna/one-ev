@@ -78,6 +78,6 @@
 </script>
 <style lang="scss">
   .main-panel {
-    height: 630px;
+    height: 740px;
   }
 </style>
