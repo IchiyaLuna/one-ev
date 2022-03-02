@@ -1,122 +1,119 @@
 <template>
-  <!-- Main panel -->
-  <div class="main-panel d-flex flex-column">
-    <!-- Top panel -->
-    <div class="row">
-      <div class="col-3 mb-4">
-        <info-card
-          :data="{
-            icon: 'fa-solid fa-user-check',
-            iconColor: 'bg-gradient-success ',
-            title: '출석',
-            value: '32',
-            delta: '',
-            deltaMessage: '',
-            isPositive: true,
-            isNegative: false,
-          }"
-        ></info-card>
-      </div>
-      <div class="col-3 mb-4">
-        <info-card
-          :data="{
-            icon: 'fa-solid fa-user-xmark',
-            iconColor: 'bg-gradient-danger ',
-            title: '미출석',
-            value: '17',
-            delta: '',
-            deltaMessage: '',
-            isPositive: true,
-            isNegative: false,
-          }"
-        ></info-card>
-      </div>
-      <div class="col-3 mb-4">
-        <info-card
-          :data="{
-            icon: 'fa-solid fa-user-plus',
-            iconColor: 'bg-gradient-warning ',
-            title: '신규',
-            value: '2',
-            delta: '',
-            deltaMessage: '',
-            isPositive: true,
-            isNegative: false,
-          }"
-        ></info-card>
-      </div>
-      <div class="col-3 mb-4">
-        <info-card
-          :data="{
-            icon: 'fa-solid fa-brake-warning',
-            iconColor: 'bg-gradient-danger ',
-            title: '상담 필요 학생',
-            value: '1',
-            delta: '',
-            deltaMessage: '',
-            isPositive: true,
-            isNegative: false,
-          }"
-        ></info-card>
-      </div>
+  <!-- Top panel -->
+  <div class="row">
+    <div class="col-3 mb-4">
+      <info-card
+        :data="{
+          icon: 'fa-solid fa-user-check',
+          iconColor: 'bg-gradient-success ',
+          title: '출석',
+          value: '32',
+          delta: '',
+          deltaMessage: '',
+          isPositive: true,
+          isNegative: false,
+        }"
+      ></info-card>
     </div>
-    <!-- Bottom panel -->
-    <div class="card flex-fill">
-      <div class="card-header p-3">
-        <nav-slider :items="this.halls" />
-      </div>
-      <div class="card-body d-flex flex-column pt-0 p-3">
-        <div class="d-flex flex-column flex-fill">
-          <table class="table table-sm table-borderless text-center h-100">
-            <thead>
-              <tr>
-                <th scope="col"></th>
-                <th v-for="classroom in this.classrooms" :key="classroom" scope="col">{{ classroom }}</th>
-              </tr>
-            </thead>
-            <tbody ref="timetablebody">
-              <tr
-                v-for="(timeObject, timeIndex) in this.times"
-                :key="timeIndex"
+    <div class="col-3 mb-4">
+      <info-card
+        :data="{
+          icon: 'fa-solid fa-user-xmark',
+          iconColor: 'bg-gradient-danger ',
+          title: '미출석',
+          value: '17',
+          delta: '',
+          deltaMessage: '',
+          isPositive: true,
+          isNegative: false,
+        }"
+      ></info-card>
+    </div>
+    <div class="col-3 mb-4">
+      <info-card
+        :data="{
+          icon: 'fa-solid fa-user-plus',
+          iconColor: 'bg-gradient-warning ',
+          title: '신규',
+          value: '2',
+          delta: '',
+          deltaMessage: '',
+          isPositive: true,
+          isNegative: false,
+        }"
+      ></info-card>
+    </div>
+    <div class="col-3 mb-4">
+      <info-card
+        :data="{
+          icon: 'fa-solid fa-brake-warning',
+          iconColor: 'bg-gradient-danger ',
+          title: '상담 필요 학생',
+          value: '1',
+          delta: '',
+          deltaMessage: '',
+          isPositive: true,
+          isNegative: false,
+        }"
+      ></info-card>
+    </div>
+  </div>
+  <!-- Bottom panel -->
+  <div class="card flex-fill">
+    <div class="card-header p-3 pb-0">
+      <nav-slider :items="this.halls" />
+    </div>
+    <div class="card-body d-flex flex-column pt-0 p-3">
+      <div class="d-flex flex-column flex-fill">
+        <table class="table table-sm table-borderless text-center h-100">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th v-for="classroom in this.classrooms" :key="classroom" scope="col">{{ classroom }}</th>
+            </tr>
+          </thead>
+          <tbody ref="timetablebody">
+            <tr
+              v-for="(timeObject, timeIndex) in this.times"
+              :key="timeIndex"
+              :style="{
+                height: this.rowHeight + '%',
+              }"
+            >
+              <th class="position-relative text-end border" scope="row">
+                <div>
+                  <div class="position-absolute top-0 start-50 translate-middle-x">{{ timeObject[0] }}</div>
+                  <div class="position-absolute top-50 start-50 translate-middle">~</div>
+                  <div class="position-absolute bottom-0 start-50 translate-middle-x">{{ timeObject[1] }}</div>
+                </div>
+              </th>
+              <td
+                ref="timetableitem"
+                v-for="(classroomNum, classroomIndex) in this.classrooms.length"
+                :key="classroomIndex"
                 :style="{
-                  height: this.rowHeight + '%',
+                  width: this.colWidth + '%',
                 }"
+                @drop="onDrop(timeIndex, classroomIndex)"
+                @dragover="onOver($event, timeIndex, classroomIndex)"
+                @dragenter.prevent
               >
-                <th class="position-relative text-end border" scope="row">
-                  <div>
-                    <div class="position-absolute top-0 start-50 translate-middle-x">{{ timeObject[0] }}</div>
-                    <div class="position-absolute top-50 start-50 translate-middle">~</div>
-                    <div class="position-absolute bottom-0 start-50 translate-middle-x">{{ timeObject[1] }}</div>
-                  </div>
-                </th>
-                <td
-                  ref="timetableitem"
-                  v-for="(classroomNum, classroomIndex) in this.classrooms.length"
-                  :key="classroomIndex"
-                  :style="{
-                    width: this.colWidth + '%',
-                  }"
-                  @drop="onDrop(timeIndex, classroomIndex)"
-                  @dragover="onOver($event, timeIndex, classroomIndex)"
-                  @dragenter.prevent
-                >
-                  <class-card
-                    class="draggable-card opacity-50"
-                    v-if="checkPreview(timeIndex, classroomIndex)"
-                    :data="getPreview(timeIndex, classroomIndex)"
-                  />
-                  <class-card
-                    class="draggable-card a"
-                    v-else-if="checkIndex(timeIndex, classroomIndex)"
-                    @dragstart="startDrag($event, getItem(timeIndex, classroomIndex))"
-                    @dragend="endDrag()"
-                    :data="getItem(timeIndex, classroomIndex)"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                <class-card
+                  class="draggable-card opacity-50"
+                  v-if="checkPreview(timeIndex, classroomIndex)"
+                  :data="getPreview(timeIndex, classroomIndex)"
+                />
+                <class-card
+                  class="draggable-card a"
+                  v-else-if="checkIndex(timeIndex, classroomIndex)"
+                  @dragstart="startDrag($event, getItem(timeIndex, classroomIndex))"
+                  @dragend="endDrag()"
+                  :data="getItem(timeIndex, classroomIndex)"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
