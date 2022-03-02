@@ -256,7 +256,7 @@
       </div>
       <!-- Bottom panel -->
       <div class="card mt-3 flex-fill overflow-auto">
-        <div class="card-header p-3">
+        <div class="card-header p-3 pb-0">
           <nav-slider-router :items="this.tabs" />
         </div>
         <div class="card-body pb-0 p-3 overflow-auto">
