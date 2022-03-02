@@ -1,7 +1,18 @@
 <template>
-  <div class="card border h-100" draggable="true">
-    <div class="h6 text-start p-2 pb-0 mb-0">{{ this.data.class }}</div>
-    <div class="text-start ps-2">{{ this.data.teacher }}</div>
+  <div class="card border container-fluid h-100 p-2" draggable="true">
+    <div class="text-start font-weight-bold">{{ this.data.class }}</div>
+    <div class="text-start border-bottom mb-1">
+      {{ this.data.teacher + "T" }}
+    </div>
+
+    <div class="row mx-0 px-2">
+      <div class="col-6 px-0">김철수</div>
+      <div class="col-6 px-0">김철수</div>
+      <div class="col-6 px-0">김철수</div>
+      <div class="col-6 px-0">김철수</div>
+      <div class="col-6 px-0">김철수</div>
+      <div class="col-6 px-0">김철수</div>
+    </div>
   </div>
 </template>
 <script>
