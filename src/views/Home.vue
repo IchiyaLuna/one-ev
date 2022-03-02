@@ -79,19 +79,23 @@
                 v-for="(timeObject, timeIndex) in this.times"
                 :key="timeIndex"
                 :style="{
-                  height: this.rowHeight + 'px',
+                  height: this.rowHeight + '%',
                 }"
               >
                 <th class="position-relative text-end border" scope="row">
                   <div>
-                    <div class="position-absolute top-0 end-0 me-2">{{ timeObject[0] }}</div>
-                    <div class="position-absolute top-50 end-0 translate-middle me-2">~</div>
-                    <div class="position-absolute bottom-0 end-0 me-2">{{ timeObject[1] }}</div>
+                    <div class="position-absolute top-0 start-50 translate-middle-x">{{ timeObject[0] }}</div>
+                    <div class="position-absolute top-50 start-50 translate-middle">~</div>
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x">{{ timeObject[1] }}</div>
                   </div>
                 </th>
                 <td
+                  ref="timetableitem"
                   v-for="(classroomNum, classroomIndex) in this.classrooms.length"
                   :key="classroomIndex"
+                  :style="{
+                    width: this.colWidth + '%',
+                  }"
                   @drop="onDrop(timeIndex, classroomIndex)"
                   @dragover="onOver($event, timeIndex, classroomIndex)"
                   @dragenter.prevent
@@ -131,7 +135,6 @@
     },
     data() {
       return {
-        timetableHeight: 0,
         currentDragId: -1,
         currentOverPosition: {
           time: -1,
@@ -139,7 +142,7 @@
         },
         previews: [],
         halls: ["1관", "2관"],
-        classrooms: ["1강의실", "2강의실", "3강의실", "4강의실", "5강의실", "6강의실", "7강의실"],
+        classrooms: ["1강의실", "2강의실", "3강의실", "4강의실", "5강의실", "6강의실"],
         times: [
           ["09:00", "13:00"],
           ["13:30", "17:30"],
@@ -175,15 +178,15 @@
     },
     computed: {
       rowHeight() {
-        return Math.floor(this.timetableHeight / this.times.length) - 8;
+        return Math.floor(100 / this.times.length);
+      },
+      colWidth() {
+        return Math.floor(100 / this.classrooms.length);
       },
     },
     methods: {
-      getIndex(time, classroom) {
-        return this.items.findIndex((x) => !x.isHidden && x.time === time && x.classroom === classroom);
-      },
       checkIndex(time, classroom) {
-        return this.getIndex(time, classroom) !== -1;
+        return this.items.findIndex((x) => !x.isHidden && x.time === time && x.classroom === classroom) !== -1;
       },
       getItem(time, classroom) {
         return this.items.find((x) => x.time === time && x.classroom === classroom);
@@ -284,9 +287,7 @@
         }
       },
     },
-    mounted() {
-      this.timetableHeight = this.$refs.timetablebody.clientHeight;
-    },
+    mounted() {},
   };
 </script>
 
