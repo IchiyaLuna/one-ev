@@ -9,8 +9,8 @@
           <div class="input-group flex-nowrap me-3">
             <span class="input-group-text text-body"><i class="fa-duotone fa-magnifying-glass"></i></span>
             <input
+              v-model="studentSearchKeyword"
               class="form-control column_filter input-border-fix"
-              id="name_filter"
               placeholder="학생 검색"
               type="text"
               onfocus="focused(this)"
@@ -32,10 +32,6 @@
               <tr>
                 <th>ID</th>
                 <th>이름</th>
-                <th>성별</th>
-                <th>학생 휴대폰</th>
-                <th>학부모 휴대폰</th>
-                <th>학교</th>
                 <th data-type="date" data-format="YYYY/MM/DD">최근 상담일</th>
               </tr>
             </thead>
@@ -54,7 +50,7 @@
               <label class="form-label">학생 이름</label>
               <div class="input-group">
                 <input
-                  :disabled="this.currentStudentId == 0 ? true : false"
+                  :disabled="this.currentStudent.id == undefined ? true : false"
                   v-model="this.currentStudent.name"
                   class="form-control"
                   type="text"
@@ -69,7 +65,7 @@
               <div class="input-group">
                 <div class="form-check form-check-inline">
                   <input
-                    :disabled="this.currentStudentId == 0 ? true : false"
+                    :disabled="this.currentStudent.id == undefined ? true : false"
                     class="form-check-input"
                     type="radio"
                     value="0"
@@ -79,7 +75,7 @@
                 </div>
                 <div class="form-check form-check-inline">
                   <input
-                    :disabled="this.currentStudentId == 0 ? true : false"
+                    :disabled="this.currentStudent.id == undefined ? true : false"
                     class="form-check-input"
                     type="radio"
                     value="1"
@@ -93,7 +89,7 @@
               <label class="form-label">학생 핸드폰</label>
               <div class="input-group">
                 <input
-                  :disabled="this.currentStudentId == 0 ? true : false"
+                  :disabled="this.currentStudent.id == undefined ? true : false"
                   v-model="this.currentStudent.student_phone"
                   class="form-control"
                   type="text"
@@ -107,7 +103,7 @@
               <label class="form-label">학부모 핸드폰</label>
               <div class="input-group">
                 <input
-                  :disabled="this.currentStudentId == 0 ? true : false"
+                  :disabled="this.currentStudent.id == undefined ? true : false"
                   v-model="this.currentStudent.parent_phone"
                   class="form-control"
                   type="text"
@@ -123,7 +119,7 @@
               <label class="form-label">학교</label>
               <div class="input-group">
                 <input
-                  :disabled="this.currentStudentId == 0 ? true : false"
+                  :disabled="this.currentStudent.id == undefined ? true : false"
                   v-model="this.currentStudent.school"
                   class="form-control"
                   type="text"
@@ -137,21 +133,25 @@
           <div class="btn-group float-end" role="group">
             <button
               @click="switchRedBtn"
-              :class="this.currentStudentId == 0 ? 'disabled' : ''"
+              :class="this.currentStudent.id == undefined ? 'disabled' : ''"
               class="btn btn-sm btn-icon mb-0 btn-outline-danger"
               type="button"
             >
               <span class="btn-inner--icon me-2"><i class="fa-solid fa-user-slash"></i></span>
-              <span class="btn-inner--text">{{ this.currentStudentId <= 0 ? "추가 취소" : "학생 삭제" }}</span>
+              <span class="btn-inner--text">{{
+                this.currentStudent.id == undefined || this.currentStudent.id < 0 ? "추가 취소" : "학생 삭제"
+              }}</span>
             </button>
             <button
               @click="switchGreenBtn(this)"
-              :class="this.currentStudentId == 0 ? 'disabled' : ''"
+              :class="this.currentStudent.id == undefined ? 'disabled' : ''"
               class="btn btn-sm btn-icon mb-0 bg-gradient-success"
               type="button"
             >
               <span class="btn-inner--icon me-2"><i class="fa-solid fa-user-plus"></i></span>
-              <span class="btn-inner--text">{{ this.currentStudentId <= 0 ? "학생 추가" : "학생 수정" }}</span>
+              <span class="btn-inner--text">{{
+                this.currentStudent.id == undefined || this.currentStudent.id < 0 ? "학생 추가" : "학생 수정"
+              }}</span>
             </button>
           </div>
         </div>
@@ -191,73 +191,49 @@
             link: "/student/consult-history",
           },
         ],
-        students: [],
         studentTable: null,
-        currentStudentId: 0,
-        currentStudent: {
-          id: 0,
-          name: "",
-          gender: "",
-          student_phone: "",
-          parent_phone: "",
-          school: "",
-          last_consult: "",
-        },
+        studentSearchKeyword: "",
+
+        fetchedStudent: [],
+        student: [],
+
+        currentStudent: {},
       };
     },
-    mounted() {
-      this.getStudents(this);
+    async mounted() {
+      let view = this;
 
-      this.studentTable = $("#studentTable").DataTable({
+      view.studentTable = $("#studentTable").DataTable({
         paging: false,
         searching: true,
         sDom: "ltr",
         info: false,
         select: true,
-        columns: [
-          { data: "id" },
-          { data: "name" },
-          { data: "gender" },
-          { data: "student_phone" },
-          { data: "parent_phone" },
-          { data: "school" },
-          { data: "last_consult" },
-        ],
+        columns: [{ data: "id" }, { data: "name" }, { data: "last_consult" }],
         columnDefs: [
           {
-            targets: [0, 2, 3, 4, 5],
+            targets: [0],
             visible: false,
             searchable: false,
           },
           {
-            targets: [1, 6],
+            targets: [1, 2],
             className: "dt-center",
           },
         ],
         order: [[1, "asc"]],
         language: {
-          zeroRecords: "검색 결과가 없습니다",
+          zeroRecords: "등록된 학생이 없습니다",
         },
       });
 
-      let view = this;
-
-      this.studentTable.on("select", function (e, dt, type, indexes) {
-        view.currentStudent = view.studentTable.rows(indexes).data().toArray()[0];
-        view.currentStudentId = view.currentStudent.id;
+      view.studentTable.on("select", function (e, dt, type, indexes) {
+        let id = view.studentTable.rows(indexes).data().toArray()[0].id;
+        view.currentStudent = view.getStudentById(view, id);
       });
 
-      this.studentTable.on("deselect", function () {
-        view.currentStudent = {
-          id: 0,
-          name: "",
-          gender: "",
-          student_phone: "",
-          parent_phone: "",
-          school: "",
-          last_consult: "",
-        };
-        view.currentStudentId = 0;
+      view.studentTable.on("deselect", function () {
+        view.currentStudent = {};
       });
 
       //Header Fix
@@ -265,9 +241,8 @@
       $("#studentTableHeader > tr > th").css("position", "sticky");
       $("#studentTableHeader > tr > th").css("top", "0");
 
-      $("input.column_filter").on("keyup click", function () {
-        $("#studentTable").DataTable().column("1").search($("#name_filter").val()).draw();
-      });
+      await view.getStudent(view);
+      await view.processStudent(view);
     },
     computed: {
       studentPhone() {
@@ -346,9 +321,12 @@
       },
     },
     watch: {
+      studentSearchKeyword() {
+        this.studentTable.column("1").search(this.studentSearchKeyword).draw();
+      },
       students() {
         this.studentTable.clear();
-        this.studentTable.rows.add(this.students).draw();
+        this.studentTable.rows.add(this.student).draw();
       },
       studentPhone() {
         this.currentStudent.student_phone = this.studentPhone.length > 13 ? this.studentPhone.substr(0, 13) : this.studentPhone;
@@ -358,139 +336,118 @@
       },
     },
     methods: {
+      isEmpty(target) {
+        if (target == null) return true;
+        if (target == undefined) return true;
+        if (typeof target === "undefined") return true;
+        if (typeof target === "string" && target === "") return true;
+        if (typeof target === "string" && target === "undefined") return true;
+        return false;
+      },
       startAdd() {
-        this.currentStudentId = -1;
-        console.log(this.studentTable);
         this.studentTable.rows().deselect();
+        this.currentStudent.id = -1;
       },
       cancelAdd() {
-        this.currentStudentId = 0;
+        this.currentStudent = {};
       },
-      getStudents(view) {
-        axios
-          .get("https://oneapi.lunabi.co.kr/student", {
+      async processStudent(view) {
+        view.student = [];
+
+        for (const student of view.fetchedStudent) {
+          view.student.push({
+            id: student.id,
+            name: student.name,
+            last_consult: student.last_consult ? student.last_consult : "기록 없음",
+          });
+        }
+
+        view.studentTable.clear();
+        view.studentTable.rows.add(view.student).draw();
+      },
+      async getStudent(view) {
+        const response = await axios.get("https://oneapi.lunabi.co.kr/student", {
+          params: {
+            key: view.API_KEY,
+          },
+        });
+        view.fetchedStudent = response.data.student;
+      },
+      getStudentById(view, id) {
+        return view.fetchedStudent.find((x) => x.id == id);
+      },
+      async postStudent(view) {
+        if (view.isEmpty(view.currentStudent.name)) {
+          view.errorSwal("이름을 입력해주세요");
+          return;
+        }
+
+        const response = await axios.post(
+          "https://oneapi.lunabi.co.kr/student",
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
             params: {
               key: view.API_KEY,
+              name: view.currentStudent.name,
+              gender: view.currentStudent.gender,
+              student_phone: view.currentStudent.student_phone,
+              parent_phone: view.currentStudent.parent_phone,
+              school: view.currentStudent.school,
+              last_consult: view.currentStudent.last_consult,
             },
-          })
-          .then(function (res) {
-            view.students = res.data.student;
-          })
-          .catch(function (err) {
-            console.log(err);
-          })
-          .then(function () {});
+          }
+        );
+        await view.getStudent(view);
+        await view.processStudent(view);
+        view.currentStudent = response.data.student;
       },
-      postStudent(view) {
-        axios
-          .post(
-            "https://oneapi.lunabi.co.kr/student",
-            {},
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-              params: {
-                key: view.API_KEY,
-                name: view.currentStudent.name,
-                gender: view.currentStudent.gender,
-                student_phone: view.currentStudent.student_phone,
-                parent_phone: view.currentStudent.parent_phone,
-                school: view.currentStudent.school,
-                last_consult: view.currentStudent.last_consult,
-              },
-            }
-          )
-          .then(function (res) {
-            console.log(res);
-            view.currentStudentId = 0;
-            view.currentStudent = {
-              id: 0,
-              name: "",
-              gender: "",
-              student_phone: "",
-              parent_phone: "",
-              school: "",
-              last_consult: "",
-            };
-            view.getStudents(view);
-          })
-          .catch(function (err) {
-            console.log(err);
-          })
-          .then(function () {});
-      },
-      updateStudent(view) {
-        axios
-          .put(
-            "https://oneapi.lunabi.co.kr/student",
-            {},
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-              params: {
-                key: view.API_KEY,
-                id: view.currentStudent.id,
-                name: view.currentStudent.name,
-                gender: view.currentStudent.gender,
-                student_phone: view.currentStudent.student_phone,
-                parent_phone: view.currentStudent.parent_phone,
-                school: view.currentStudent.school,
-                last_consult: view.currentStudent.last_consult,
-              },
-            }
-          )
-          .then(function (res) {
-            console.log(res);
-            view.currentStudentId = 0;
-            view.currentStudent = {
-              id: 0,
-              name: "",
-              gender: "",
-              student_phone: "",
-              parent_phone: "",
-              school: "",
-              last_consult: "",
-            };
-            view.getStudents(view);
-          })
-          .catch(function (err) {
-            console.log(err);
-          })
-          .then(function () {});
-      },
-      deleteStudent(view) {
-        axios
-          .delete("https://oneapi.lunabi.co.kr/student", {
+      async updateStudent(view) {
+        if (view.isEmpty(view.currentStudent.name)) {
+          view.errorSwal("이름을 입력해주세요");
+          return;
+        }
+
+        const response = await axios.put(
+          "https://oneapi.lunabi.co.kr/student",
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
             params: {
               key: view.API_KEY,
               id: view.currentStudent.id,
+              name: view.currentStudent.name,
+              gender: view.currentStudent.gender,
+              student_phone: view.currentStudent.student_phone,
+              parent_phone: view.currentStudent.parent_phone,
+              school: view.currentStudent.school,
+              last_consult: view.currentStudent.last_consult,
             },
-          })
-          .then(function (res) {
-            console.log(res);
-            view.currentStudentId = 0;
-            view.currentStudent = {
-              id: 0,
-              name: "",
-              gender: "",
-              student_phone: "",
-              parent_phone: "",
-              school: "",
-              last_consult: "",
-            };
-            view.getStudents(view);
-            Swal.fire("Deleted!", "Your file has been deleted.", "success");
-          })
-          .catch(function (err) {
-            console.log(err);
-            Swal.fire("Error!", "Your file has been deleted.", "error");
-          })
-          .then(function () {});
+          }
+        );
+        await view.getStudent(view);
+        await view.processStudent(view);
+        view.currentStudent = response.data.student;
+      },
+      async deleteStudent(view) {
+        const response = await axios.delete("https://oneapi.lunabi.co.kr/student", {
+          params: {
+            key: view.API_KEY,
+            id: view.currentStudent.id,
+          },
+        });
+        await view.getStudent(view);
+        await view.processStudent(view);
+        view.currentStudent = {};
+        if (response.data.ok) Swal.fire("학생 삭제 완료", "학생 정보를 삭제했습니다", "success");
+        else Swal.fire("오류!", "학생을 삭제하지 못했습니다", "error");
       },
       switchRedBtn() {
-        if (this.currentStudentId < 0) {
+        if (this.currentStudent.id < 0) {
           const cancelSwal = Swal.mixin({
             customClass: {
               confirmButton: "btn bg-gradient-success",
@@ -501,8 +458,8 @@
 
           cancelSwal
             .fire({
-              title: "취소하시겠습니까?",
-              text: "입력한 내용이 사라집니다.",
+              title: "학생 추가 취소",
+              text: "입력한 내용이 사라집니다",
               showCancelButton: !0,
               reverseButtons: !0,
               cancelButtonText: "계속 입력하기",
@@ -522,7 +479,7 @@
 
           deleteSwal
             .fire({
-              title: "학생을 삭제할까요?",
+              title: "학생 삭제",
               text: "학생 정보가 영구히 삭제됩니다!",
               showCancelButton: !0,
               reverseButtons: !0,
@@ -535,7 +492,7 @@
         }
       },
       switchGreenBtn(view) {
-        if (view.currentStudentId < 0) {
+        if (view.currentStudent.id < 0) {
           const addSwal = Swal.mixin({
             customClass: {
               confirmButton: "btn bg-gradient-success",
@@ -546,12 +503,12 @@
 
           addSwal
             .fire({
-              title: "학생을 추가하시겠습니까?",
-              text: "새로운 학생이 추가됩니다.",
+              title: "학생 추가",
+              text: "새로운 학생이 추가됩니다",
               showCancelButton: !0,
               reverseButtons: !0,
               cancelButtonText: "취소",
-              confirmButtonText: "수정",
+              confirmButtonText: "추가",
             })
             .then((e) => {
               e.isConfirmed ? this.postStudent(this) : "";
@@ -567,8 +524,8 @@
 
           updateSwal
             .fire({
-              title: "정보를 업데이트 하시겠습니까??",
-              text: "수정은 되돌릴 수 없습니다.",
+              title: "학생 정보 수정",
+              text: "학생 정보를 수정합니다",
               showCancelButton: !0,
               reverseButtons: !0,
               cancelButtonText: "취소",
@@ -578,6 +535,13 @@
               e.isConfirmed ? this.updateStudent(this) : "";
             });
         }
+      },
+      errorSwal(text) {
+        Swal.fire({
+          icon: "error",
+          title: "오류",
+          text: text,
+        });
       },
     },
   };

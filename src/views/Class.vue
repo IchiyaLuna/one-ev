@@ -2,7 +2,7 @@
   <!-- Main panel -->
   <div class="row">
     <!-- First panel -->
-    <div class="col-4 main-panel">
+    <div class="col-3 main-panel">
       <div class="card h-100">
         <!-- Top section -->
         <div class="d-flex p-3">
@@ -81,7 +81,7 @@
       </div>
     </div>
     <!-- Third panel -->
-    <div class="col-4 d-flex flex-column main-panel">
+    <div class="col-5 d-flex flex-column main-panel">
       <!-- Top panel -->
       <div class="card">
         <div class="card-body">
@@ -145,6 +145,43 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="card border text-center" :draggable="this.currentClass.id == 0 ? false : true">끌어서 시간표에 추가 (수정중)</div>
+            </div>
+            <div class="col-12">
+              <table class="table table-sm text-center w-100" style="height: 100px">
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th v-for="day in this.day" :key="day" scope="col">{{ day }}</th>
+                  </tr>
+                </thead>
+                <tbody ref="timetablebody">
+                  <tr
+                    v-for="(timeObject, timeIndex) in this.times"
+                    :key="timeIndex"
+                    :style="{
+                      height: this.rowHeight + '%',
+                    }"
+                  >
+                    <th class="position-relative text-end border" scope="row">
+                      <div>
+                        {{ timeObject[0] }}
+                      </div>
+                    </th>
+                    <td
+                      v-for="(d, i) in this.day"
+                      :key="i"
+                      :style="{
+                        width: this.colWidth + '%',
+                      }"
+                    ></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
           <div class="btn-group float-end" role="group">
             <button
               @click="switchRedBtn"
@@ -205,8 +242,58 @@
 
   export default {
     inject: ["API_KEY"],
+    computed: {
+      colWidth() {
+        return Math.floor(100 / this.day.length);
+      },
+      rowHeight() {
+        return Math.floor(100 / 3);
+      },
+    },
     data() {
       return {
+        currentDragId: -1,
+        currentOverPosition: {
+          time: -1,
+          classroom: -1,
+        },
+        times: [
+          ["09:00", "13:00"],
+          ["13:30", "17:30"],
+          ["18:00", "22:00"],
+        ],
+        day: ["월", "화", "수", "목", "금", "토"],
+        previews: [],
+        items: [
+          {
+            isHidden: false,
+            draggable: true,
+            id: 0,
+            classroom: 1,
+            time: 0,
+            class: "미적분",
+            teacher: "김국어",
+          },
+          {
+            isHidden: false,
+            draggable: true,
+            id: 1,
+            classroom: 3,
+            time: 1,
+            class: "국어",
+            teacher: "이세종",
+          },
+          {
+            isHidden: false,
+            draggable: true,
+            id: 2,
+            classroom: 5,
+            time: 2,
+            class: "사회",
+            teacher: "마르크스",
+          },
+        ],
+
         fetchedSubject: [],
         fetchedClass: [],
         fetchedTeacher: [],
@@ -234,9 +321,13 @@
         },
 
         classTable: null,
+        classSearchKeyword: "",
       };
     },
     watch: {
+      classSearchKeyword() {
+        this.classTable.column("1").search(this.classSearchKeyword).draw();
+      },
       subject() {
         this.subjectTable.clear();
         this.subjectTable.rows.add(this.subject).draw();
@@ -250,11 +341,7 @@
       },
     },
     async mounted() {
-      this.getHall(this);
-      this.getRoom(this);
-      this.getTeacher(this);
-      this.getClass(this);
-      await this.getSubject(this);
+      let view = this;
 
       this.subjectTable = $("#subjectTable").DataTable({
         paging: false,
@@ -278,8 +365,6 @@
           zeroRecords: "수업 분류가 없습니다.",
         },
       });
-
-      let view = this;
 
       this.subjectTable.on("select", function (e, dt, type, indexes) {
         view.currentSubjectId = view.subjectTable.rows(indexes).data().toArray()[0].id;
@@ -344,10 +429,13 @@
         searchName();
       });
 
-      $(".bottomPanel").css("background-color", "white");
-      $(".bottomPanel").css("position", "sticky");
-      $(".bottomPanel").css("bottom", "0");
-      $(".bottomPanel").css("z-index", "1020");
+      await view.getHall(view);
+      await view.getRoom(view);
+      await view.getTeacher(view);
+      await view.getClass(view);
+      await view.getSubject(view);
+
+      view.processSubject(view);
     },
     methods: {
       processSubject(view) {
@@ -360,9 +448,9 @@
           });
         }
       },
-      processClass(view) {
+      async processClass(view) {
         view.class = [];
-        for (const classData of view.fetchedClass.filter((x) => x.subject_id == this.currentSubjectId)) {
+        for (const classData of view.fetchedClass.filter((x) => x.subject_id == view.currentSubjectId)) {
           view.class.push({
             id: classData.id,
             name: classData.name,
@@ -393,38 +481,23 @@
             key: view.API_KEY,
           },
         });
-
         view.fetchedTeacher = response.data.teacher;
       },
       async getHall(view) {
-        axios
-          .get("https://oneapi.lunabi.co.kr/hall", {
-            params: {
-              key: view.API_KEY,
-            },
-          })
-          .then(function (res) {
-            view.fetchedHall = res.data.hall;
-          })
-          .catch(function (err) {
-            console.log(err);
-          })
-          .then(function () {});
+        const response = await axios.get("https://oneapi.lunabi.co.kr/hall", {
+          params: {
+            key: view.API_KEY,
+          },
+        });
+        view.fetchedHall = response.data.hall;
       },
       async getRoom(view) {
-        axios
-          .get("https://oneapi.lunabi.co.kr/room", {
-            params: {
-              key: view.API_KEY,
-            },
-          })
-          .then(function (res) {
-            view.fetchedRoom = res.data.room;
-          })
-          .catch(function (err) {
-            console.log(err);
-          })
-          .then(function () {});
+        const response = await axios.get("https://oneapi.lunabi.co.kr/room", {
+          params: {
+            key: view.API_KEY,
+          },
+        });
+        view.fetchedRoom = response.data.room;
       },
       postSubject(view) {
         axios
@@ -450,38 +523,28 @@
           })
           .then(function () {});
       },
-      postClass(view) {
-        axios
-          .post(
-            "https://oneapi.lunabi.co.kr/class",
-            {},
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-              params: {
-                key: view.API_KEY,
-                room_id: view.currentClass.room_id,
-                name: view.currentClass.name,
-                subject_id: view.currentClass.subject_id,
-                teacher_id: view.currentClass.teacher_id,
-                full_student: view.currentClass.full_student,
-                time: view.currentClass.time,
-              },
-            }
-          )
-          .then(function (res) {
-            console.log(res);
-            view.getClass(view);
-          })
-          .then(function () {
-            view.processSubject(view);
-            view.processClass(view);
-          })
-          .catch(function (err) {
-            console.log(err);
-          })
-          .then(function () {});
+      async postClass(view) {
+        const response = axios.post(
+          "https://oneapi.lunabi.co.kr/class",
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            params: {
+              key: view.API_KEY,
+              room_id: view.currentClass.room_id,
+              name: view.currentClass.name,
+              subject_id: view.currentClass.subject_id,
+              teacher_id: view.currentClass.teacher_id,
+              full_student: view.currentClass.full_student,
+              time: view.currentClass.time,
+            },
+          }
+        );
+        await view.getClass(view);
+        await view.processClass(view);
+        view.currentClass = response.data.class;
       },
       getClassById(view, id) {
         return view.fetchedClass.find((x) => x.id == id);
@@ -493,7 +556,6 @@
         return view.fetchedTeacher.find((x) => x.id == teacher_id).name;
       },
       getHallNameById(view, hall_id) {
-        console.log(hall_id);
         return view.fetchedHall.find((x) => x.id == hall_id).name;
       },
 
@@ -622,3 +684,18 @@
     },
   };
 </script>
+
+<style lang="scss">
+  .bottomPanel {
+    background-color: white;
+    position: sticky;
+    bottom: 0;
+    z-index: 1020;
+  }
+
+  .card {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>

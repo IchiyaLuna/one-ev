@@ -50,7 +50,7 @@
               <label class="form-label">강사 이름</label>
               <div class="input-group">
                 <input
-                  :disabled="this.currentTeacher.id == 0 ? true : false"
+                  :disabled="this.currentTeacher.id == undefined ? true : false"
                   v-model="this.currentTeacher.name"
                   class="form-control"
                   type="text"
@@ -67,21 +67,25 @@
           <div class="btn-group float-end" role="group">
             <button
               @click="switchRedBtn"
-              :disabled="this.currentTeacher.id == 0 ? true : false"
+              :disabled="this.currentTeacher.id == undefined ? true : false"
               class="btn btn-sm btn-icon mb-0 btn-outline-danger"
               type="button"
             >
               <span class="btn-inner--icon me-2"><i class="fa-solid fa-user-slash"></i></span>
-              <span class="btn-inner--text">{{ this.currentTeacher.id <= 0 ? "추가 취소" : "강사 삭제" }}</span>
+              <span class="btn-inner--text">{{
+                this.currentTeacher.id == undefined || this.currentTeacher.id < 0 ? "추가 취소" : "강사 삭제"
+              }}</span>
             </button>
             <button
               @click="switchGreenBtn"
-              :disabled="this.currentTeacher.id == 0 ? true : false"
+              :disabled="this.currentTeacher.id == undefined ? true : false"
               class="btn btn-sm btn-icon mb-0 bg-gradient-success"
               type="button"
             >
               <span class="btn-inner--icon me-2"><i class="fa-solid fa-user-plus"></i></span>
-              <span class="btn-inner--text">{{ this.currentTeacher.id <= 0 ? "강사 추가" : "강사 수정" }}</span>
+              <span class="btn-inner--text">{{
+                this.currentTeacher.id == undefined || this.currentTeacher.id < 0 ? "강사 추가" : "강사 수정"
+              }}</span>
             </button>
           </div>
         </div>
@@ -117,19 +121,15 @@
     data() {
       return {
         fetchedTeacher: [],
+        fetchedClass: [],
         teacher: [],
-        currentTeacher: {
-          id: 0,
-          name: "",
-        },
-        currentTeacherId: 0,
+        currentTeacher: {},
         teacherTable: null,
         tempClass: [],
       };
     },
-    mounted() {
+    async mounted() {
       let view = this;
-      this.getTeacher(view);
 
       this.teacherTable = $("#teacherTable").DataTable({
         paging: false,
@@ -156,95 +156,82 @@
       });
 
       this.teacherTable.on("select", function (e, dt, type, indexes) {
-        view.currentTeacher = view.studentTable.rows(indexes).data().toArray()[0];
-        view.currentTeacherId = view.currentTeacher.id;
+        let id = view.teacherTable.rows(indexes).data().toArray()[0].id;
+        view.currentTeacher = view.getTeacherById(view, id);
       });
+
+      view.teacherTable.on("deselect", function () {
+        view.currentTeacher = {};
+      });
+
+      await this.getTeacher(view);
+      await this.getClass(view);
+
+      await this.processTeacher(view);
     },
     computed: {},
-    watch: {
-      teacher() {
-        this.teacherTable.clear();
-        this.teacherTable.rows.add(this.teacher).draw();
-      },
-      fetchedTeacher() {
-        this.teacher = [];
-        for (const teacherData of this.fetchedTeacher) {
-          this.getClassByTeacher(this, teacherData.id);
-          this.teacher.push({
-            id: teacherData.id,
-            name: teacherData.name,
-            class_count: this.tempClass.length,
-          });
-        }
-      },
-    },
+    watch: {},
     methods: {
       startAdd() {
-        this.currentTeacher.id = -1;
         this.teacherTable.rows().deselect();
+        this.currentTeacher.id = -1;
       },
       cancelAdd() {
-        this.currentTeacher.id = 0;
+        this.currentTeacher = {};
       },
-      getTeacher(view) {
-        axios
-          .get("https://oneapi.lunabi.co.kr/teacher", {
+      async processTeacher(view) {
+        view.teacher = [];
+
+        for (const teacher of view.fetchedTeacher) {
+          view.teacher.push({
+            id: teacher.id,
+            name: teacher.name,
+            class_count: view.countClassByTeacherId(view, teacher.id),
+          });
+        }
+
+        view.teacherTable.clear();
+        view.teacherTable.rows.add(view.teacher).draw();
+      },
+      async getTeacher(view) {
+        const response = await axios.get("https://oneapi.lunabi.co.kr/teacher", {
+          params: {
+            key: view.API_KEY,
+          },
+        });
+        view.fetchedTeacher = response.data.teacher;
+      },
+      async getClass(view) {
+        const response = await axios.get("https://oneapi.lunabi.co.kr/class", {
+          params: {
+            key: view.API_KEY,
+          },
+        });
+        view.fetchedClass = response.data.class;
+      },
+      async postTeacher(view) {
+        const response = await axios.post(
+          "https://oneapi.lunabi.co.kr/teacher",
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
             params: {
               key: view.API_KEY,
+              name: view.currentTeacher.name,
             },
-          })
-          .then(function (res) {
-            view.fetchedTeacher = res.data.teacher;
-          })
-          .catch(function (err) {
-            console.log(err);
-          })
-          .then(function () {});
+          }
+        );
+        await view.getTeacher(view);
+        await view.processTeacher(view);
+        view.currentTeacher = response.data.teacher;
       },
-      postTeacher(view) {
-        axios
-          .post(
-            "https://oneapi.lunabi.co.kr/teacher",
-            {},
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-              params: {
-                key: view.API_KEY,
-                name: view.currentTeacher.name,
-              },
-            }
-          )
-          .then(function (res) {
-            console.log(res);
-            view.currentTeacher = {
-              id: 0,
-              name: "",
-            };
-            view.getTeacher(view);
-          })
-          .catch(function (err) {
-            console.log(err);
-          })
-          .then(function () {});
+      getTeacherById(view, id) {
+        return view.fetchedTeacher.find((x) => x.id == id);
       },
-      getClassByTeacher(view, teacher_id) {
-        axios
-          .get("https://oneapi.lunabi.co.kr/class/teacher", {
-            params: {
-              key: view.API_KEY,
-              teacher_id: teacher_id,
-            },
-          })
-          .then(function (res) {
-            view.tempClass = res.data.teacher;
-          })
-          .catch(function (err) {
-            console.log(err);
-            view.tempClass = [];
-          })
-          .then(function () {});
+      countClassByTeacherId(view, teacher_id) {
+        return view.fetchedClass.filter((x) => x.teacher_id == teacher_id).length;
       },
       switchRedBtn() {
         if (this.currentTeacher.id < 0) {
@@ -259,7 +246,7 @@
           cancelSwal
             .fire({
               title: "강사 추가 취소",
-              text: "입력한 내용이 사라집니다.",
+              text: "입력한 내용이 사라집니다",
               showCancelButton: !0,
               reverseButtons: !0,
               cancelButtonText: "계속 입력하기",

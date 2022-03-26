@@ -135,6 +135,7 @@
         currentMenu: 0,
         name: "",
         tel: "",
+        fetchedHall: [],
         hall: [],
         currentHallId: 0,
         hallTable: null,
@@ -149,14 +150,12 @@
       },
       room() {
         this.roomTable.clear();
-        this.roomTable.rows.add(this.room).draw();
+        this.roomTable.rows.add(this.room.filter((x) => x.hall_id == this.currentHallId)).draw();
       },
     },
-    mounted() {
+    async mounted() {
       initNavs(document);
       this.getAcademy(this);
-      this.getHall(this);
-      this.getRoom(this);
 
       let view = this;
 
@@ -211,6 +210,9 @@
           zeroRecords: "해당 관에 교실이 없습니다.",
         },
       });
+
+      await this.getHall(this);
+      await this.getRoom(this);
     },
     methods: {
       setMenu(index) {
@@ -233,21 +235,14 @@
           })
           .then(function () {});
       },
-      getHall(view) {
-        axios
-          .get("https://oneapi.lunabi.co.kr/hall", {
-            params: {
-              key: view.API_KEY,
-            },
-          })
-          .then(function (res) {
-            console.log(res.data.hall);
-            view.hall = res.data.hall;
-          })
-          .catch(function (err) {
-            console.log(err);
-          })
-          .then(function () {});
+      async getHall(view) {
+        view.hall = [];
+        const response = await axios.get("https://oneapi.lunabi.co.kr/hall", {
+          params: {
+            key: view.API_KEY,
+          },
+        });
+        view.hall = response.data.hall;
       },
       postHall(view, name) {
         axios
@@ -273,21 +268,14 @@
           })
           .then(function () {});
       },
-      getRoom(view) {
-        axios
-          .get("https://oneapi.lunabi.co.kr/room", {
-            params: {
-              key: view.API_KEY,
-            },
-          })
-          .then(function (res) {
-            view.room = res.data.room;
-          })
-          .catch(function (err) {
-            console.log(err);
-            view.room = [];
-          })
-          .then(function () {});
+      async getRoom(view) {
+        view.room = [];
+        const response = await axios.get("https://oneapi.lunabi.co.kr/room", {
+          params: {
+            key: view.API_KEY,
+          },
+        });
+        view.room = response.data.room;
       },
       postRoom(view, name) {
         axios
