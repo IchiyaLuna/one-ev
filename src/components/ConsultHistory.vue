@@ -12,6 +12,26 @@
     </div>
     <div class="timeline-block">
       <span class="timeline-step">
+        <i class="fa-solid fa-family text-info text-gradient"></i>
+      </span>
+      <div class="timeline-content">
+        <h6 class="text-dark text-sm font-weight-bold mb-0">학부모 상담</h6>
+        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">2022 02 14</p>
+        <p class="text-sm mt-3 mb-2">학부모랑도 상담했대~~~</p>
+      </div>
+    </div>
+    <div class="timeline-block">
+      <span class="timeline-step">
+        <i class="fa-solid fa-family text-info text-gradient"></i>
+      </span>
+      <div class="timeline-content">
+        <h6 class="text-dark text-sm font-weight-bold mb-0">학부모 상담</h6>
+        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">2022 02 14</p>
+        <p class="text-sm mt-3 mb-2">학부모랑도 상담했대~~~</p>
+      </div>
+    </div>
+    <div class="timeline-block">
+      <span class="timeline-step">
         <i class="fa-solid fa-graduation-cap text-warning text-gradient"></i>
       </span>
       <div class="timeline-content">

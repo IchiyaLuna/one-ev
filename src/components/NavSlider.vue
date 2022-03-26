@@ -11,14 +11,14 @@
 </template>
 
 <script>
-  import { initNavs } from "@/plugins/NavPlus.js";
+  import { initNavs } from "../plugins/NavPlus";
 
   export default {
     props: {
       items: Array,
     },
     mounted() {
-      initNavs();
+      initNavs(document);
     },
   };
 </script>

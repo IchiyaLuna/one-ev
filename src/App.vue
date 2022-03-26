@@ -54,6 +54,7 @@
         appData: {
           version: "v0.0.2",
         },
+        API_KEY: "f9905e3c4a683ab33e07b8b75f5ec96a",
         routeData: this.routeData,
       };
     },

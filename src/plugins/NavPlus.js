@@ -1,8 +1,8 @@
-function initNavs() {
-  var total = document.querySelectorAll(".nav-pills");
+function initNavs(document) {
+  let total = document.querySelectorAll(".nav-pills");
 
   total.forEach(function (l) {
-    var s = document.createElement("div"),
+    let s = document.createElement("div"),
       t = l.querySelector("li:first-child .nav-link").cloneNode();
     (t.innerHTML = "-"), s.classList.add("moving-tab", "position-absolute", "nav-link"), s.appendChild(t), l.appendChild(s);
     l.getElementsByTagName("li").length;
@@ -20,7 +20,7 @@ function initNavs() {
             s = l.querySelector(".moving-tab");
             let e = 0;
             if (l.classList.contains("flex-column")) {
-              for (var t = 1; t <= a.indexOf(i); t++) e += l.querySelector("li:nth-child(" + t + ")").offsetHeight;
+              for (let t = 1; t <= a.indexOf(i); t++) e += l.querySelector("li:nth-child(" + t + ")").offsetHeight;
               (s.style.transform = "translate3d(0px," + e + "px, 0px)"),
                 (s.style.height = l.querySelector("li:nth-child(" + t + ")").offsetHeight);
             } else {
