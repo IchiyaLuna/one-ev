@@ -1,6 +1,6 @@
 <template>
   <div class="card border container-fluid h-100 p-2" draggable="true">
-    <div class="text-start font-weight-bold">{{ this.data.class }}</div>
+    <div class="text-start font-weight-bold">{{ this.data.name }}</div>
     <div class="text-start border-bottom mb-1">
       {{ this.data.teacher + "T" }}
     </div>
