@@ -27,16 +27,7 @@
         </div>
         <!-- Table section -->
         <div class="student-list table-responsive">
-          <table class="table table-hover dt-center" id="studentTable">
-            <thead id="studentTableHeader">
-              <tr>
-                <th>ID</th>
-                <th>이름</th>
-                <th data-type="date" data-format="YYYY/MM/DD">최근 상담일</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <table class="table table-hover dt-center" id="studentTable"></table>
         </div>
       </div>
     </div>
@@ -203,18 +194,26 @@
     async mounted() {
       let view = this;
 
+      await view.getStudent(view);
+      await view.processStudent(view);
+
       view.studentTable = $("#studentTable").DataTable({
         paging: false,
         searching: true,
         sDom: "ltr",
         info: false,
         select: true,
-        columns: [{ data: "id" }, { data: "name" }, { data: "last_consult" }],
+        data: view.student,
+        columns: [
+          { title: "ID", data: "id" },
+          { title: "이름", data: "name" },
+          { title: "최근 상담일", data: "last_consult" },
+        ],
         columnDefs: [
           {
             targets: [0],
-            visible: false,
             searchable: false,
+            visible: false,
           },
           {
             targets: [1, 2],
@@ -240,9 +239,6 @@
       $("#studentTableHeader > tr > th").css("background-color", "white");
       $("#studentTableHeader > tr > th").css("position", "sticky");
       $("#studentTableHeader > tr > th").css("top", "0");
-
-      await view.getStudent(view);
-      await view.processStudent(view);
     },
     computed: {
       studentPhone() {
@@ -324,9 +320,9 @@
       studentSearchKeyword() {
         this.studentTable.column("1").search(this.studentSearchKeyword).draw();
       },
-      students() {
-        this.studentTable.clear();
-        this.studentTable.rows.add(this.student).draw();
+      student() {
+        //this.studentTable.clear();
+        //this.studentTable.draw();
       },
       studentPhone() {
         this.currentStudent.student_phone = this.studentPhone.length > 13 ? this.studentPhone.substr(0, 13) : this.studentPhone;
@@ -362,8 +358,8 @@
           });
         }
 
-        view.studentTable.clear();
-        view.studentTable.rows.add(view.student).draw();
+        //view.studentTable.clear();
+        //view.studentTable.rows.add(view.student).draw();
       },
       async getStudent(view) {
         const response = await axios.get("https://oneapi.lunabi.co.kr/student", {
@@ -402,6 +398,7 @@
         );
         await view.getStudent(view);
         await view.processStudent(view);
+        view.studentTable.clear().rows.add(view.student).draw();
         view.currentStudent = response.data.student;
       },
       async updateStudent(view) {
@@ -431,6 +428,7 @@
         );
         await view.getStudent(view);
         await view.processStudent(view);
+        view.studentTable.clear().rows.add(view.student).draw();
         view.currentStudent = response.data.student;
       },
       async deleteStudent(view) {
@@ -442,6 +440,7 @@
         });
         await view.getStudent(view);
         await view.processStudent(view);
+        view.studentTable.clear().rows.add(view.student).draw();
         view.currentStudent = {};
         if (response.data.ok) Swal.fire("학생 삭제 완료", "학생 정보를 삭제했습니다", "success");
         else Swal.fire("오류!", "학생을 삭제하지 못했습니다", "error");
