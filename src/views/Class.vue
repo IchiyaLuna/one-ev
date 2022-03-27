@@ -692,10 +692,4 @@
     bottom: 0;
     z-index: 1020;
   }
-
-  .card {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 </style>

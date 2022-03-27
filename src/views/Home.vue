@@ -61,8 +61,15 @@
     </div>
     <!-- Bottom panel -->
     <div class="card flex-fill">
-      <div class="card-header p-3 pb-0">
-        <div class="nav-wrapper position-relative end-0">
+      <div class="card-header d-flex p-3 pb-0">
+        <div>
+          <select v-model="this.currentWeekDay" class="form-control" name="choices-button" id="choices-button">
+            <option v-for="(name, index) in weekday" :key="index" :value="index">
+              {{ name }}
+            </option>
+          </select>
+        </div>
+        <div class="nav-wrapper flex-fill position-relative ms-3 end-0">
           <ul class="nav nav-pills nav-fill p-1" role="tablist">
             <li class="nav-item" v-for="(item, index) in this.hall" :key="item.id">
               <a @click="this.currentHall = item.id" class="nav-link mb-0 px-0 py-1" :class="index === 0 ? 'active' : ''" role="tab">
@@ -103,21 +110,21 @@
                   :style="{
                     width: this.colWidth + '%',
                   }"
-                  @drop="onDrop(timeIndex, room.id)"
-                  @dragover="onOver($event, timeIndex, room.id)"
+                  @drop="onDrop(currentWeekDay, timeIndex, room.id)"
+                  @dragover="onOver($event, currentWeekDay, timeIndex, room.id)"
                   @dragenter.prevent
                 >
                   <class-card
                     class="draggable-card opacity-50"
-                    v-if="checkPreview(timeIndex, room.id)"
-                    :data="getPreview(timeIndex, room.id)"
+                    v-if="checkPreview(currentWeekDay, timeIndex, room.id)"
+                    :data="getProcessedClassById(this, this.checkPreview(currentWeekDay, timeIndex, room.id))"
                   />
                   <class-card
                     class="draggable-card"
-                    v-else-if="checkIndex(timeIndex, room.id)"
-                    @dragstart="startDrag($event, getItem(timeIndex, room.id))"
+                    v-else-if="checkClass(currentWeekDay, timeIndex, room.id)"
+                    @dragstart="startDrag($event, timeIndex, room.id, checkClass(currentWeekDay, timeIndex, room.id))"
                     @dragend="endDrag()"
-                    :data="getItem(timeIndex, room.id)"
+                    :data="getProcessedClassById(this, checkClass(currentWeekDay, timeIndex, room.id))"
                   />
                 </td>
               </tr>
@@ -131,6 +138,7 @@
 
 <script>
   import axios from "axios";
+  import Swal from "../plugins/sweetalert2";
   import { initNavs } from "../plugins/NavPlus";
 
   import InfoCard from "@/components/InfoCard.vue";
@@ -144,54 +152,46 @@
     },
     data() {
       return {
+        hall: [],
+        fetchedRoom: [],
+        fetchedClass: [],
+        fetchedTeacher: [],
+        fetchedTimetable: [],
+
         currentDragId: -1,
+        originPosition: {
+          time: -1,
+          room_id: -1,
+        },
         currentOverPosition: {
           time: -1,
-          classroom: -1,
+          room_id: -1,
         },
-        previews: [],
-        hall: [],
-        currentHall: 0,
-        fetchedRoom: [],
-        room: [],
+        preview: [],
+
         times: [
           ["09:00", "13:00"],
           ["13:30", "17:30"],
           ["18:00", "22:00"],
         ],
-        items: [
-          {
-            isHidden: false,
-            id: 0,
-            classroom: 1,
-            time: 0,
-            class: "미적분",
-            teacher: "김국어",
-          },
-          {
-            isHidden: false,
-            id: 1,
-            classroom: 3,
-            time: 1,
-            class: "국어",
-            teacher: "이세종",
-          },
-          {
-            isHidden: false,
-            id: 2,
-            classroom: 5,
-            time: 2,
-            class: "사회",
-            teacher: "마르크스",
-          },
-        ],
+        weekday: ["일", "월", "화", "수", "목", "금", "토"],
+        room: [],
+        currentWeekDay: 0,
+        currentHall: 0,
       };
     },
     async mounted() {
       let view = this;
+      let today = new Date();
+      view.currentWeekDay = today.getDay();
 
       await view.getHall(view);
       await view.getRoom(view);
+      await view.getClass(view);
+      await view.getTeacher(view);
+      await view.getTimetable(view);
+
+      await view.processClass(view);
       view.currentHall = view.hall[0].id;
       await initNavs(document);
     },
@@ -205,11 +205,22 @@
         return Math.floor(100 / this.times.length);
       },
       colWidth() {
-        console.log(this.room);
         return Math.floor(100 / this.room.length);
       },
     },
     methods: {
+      async processClass(view) {
+        view.class = [];
+
+        for (const classData of view.fetchedClass) {
+          view.class.push({
+            isHidden: false,
+            id: classData.id,
+            name: classData.name,
+            teacher: view.getTeacherById(view, classData.teacher_id).name,
+          });
+        }
+      },
       async getHall(view) {
         const response = await axios.get("https://oneapi.lunabi.co.kr/hall", {
           params: {
@@ -226,28 +237,87 @@
         });
         view.fetchedRoom = response.data.room;
       },
+      async getClass(view) {
+        const response = await axios.get("https://oneapi.lunabi.co.kr/class", {
+          params: {
+            key: view.API_KEY,
+          },
+        });
+        view.fetchedClass = response.data.class;
+      },
+      async getTeacher(view) {
+        const response = await axios.get("https://oneapi.lunabi.co.kr/teacher", {
+          params: {
+            key: view.API_KEY,
+          },
+        });
+        view.fetchedTeacher = response.data.teacher;
+      },
+      async getTimetable(view) {
+        const response = await axios.get("https://oneapi.lunabi.co.kr/timetable", {
+          params: {
+            key: view.API_KEY,
+          },
+        });
+        view.fetchedTimetable = response.data.timetable;
+      },
+      async putTimetable(view, id, weekday, time, room_id) {
+        await axios.put(
+          "https://oneapi.lunabi.co.kr/timetable",
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            params: {
+              key: view.API_KEY,
+              id: id,
+              weekday: weekday,
+              time: time,
+              room_id: room_id,
+            },
+          }
+        );
+
+        await view.getTimetable(view);
+      },
+      getTimetableId(view, weekday, time, room_id, class_id) {
+        return view.fetchedTimetable.find((x) => x.weekday == weekday && x.time == time && x.room_id == room_id && x.class_id == class_id)
+          .id;
+      },
+      getTimetableById(view, timetable_id) {
+        return view.fetchedTimetable.find((x) => x.id == timetable_id);
+      },
       getRoomByHallId(view, hall_id) {
         return view.fetchedRoom.filter((x) => x.hall_id == hall_id);
       },
-      checkIndex(time, classroom) {
-        console.log(classroom);
-        return this.items.findIndex((x) => !x.isHidden && x.time === time && x.classroom == classroom) !== -1;
+      getTeacherById(view, teacher_id) {
+        return view.fetchedTeacher.find((x) => x.id == teacher_id);
       },
-      getItem(time, classroom) {
-        return this.items.find((x) => x.time === time && x.classroom == classroom);
+      getProcessedClassById(view, class_id) {
+        return view.class.find((x) => x.id == class_id);
       },
-      checkPreview(time, classroom) {
-        return this.previews.findIndex((x) => x.time === time && x.classroom == classroom) !== -1;
+      getPreviewByClassId(view, class_id) {
+        return view.preview.find((x) => x.class_id == class_id);
       },
-      getPreview(time, classroom) {
-        return this.previews.find((x) => x.time === time && x.classroom == classroom);
+      checkClass(weekday, time, room_id) {
+        if (!this.fetchedTimetable) return false;
+        if (typeof this.fetchedTimetable.find((x) => x.weekday == weekday && x.time == time && x.room_id == room_id) != "undefined") {
+          return this.fetchedTimetable.find((x) => x.weekday == weekday && x.time == time && x.room_id == room_id).class_id;
+        } else false;
+      },
+      checkPreview(weekday, time, room_id) {
+        if (!this.preview) return false;
+        if (typeof this.preview.find((x) => x.weekday == weekday && x.time == time && x.room_id == room_id) != "undefined") {
+          return this.preview.find((x) => x.weekday == weekday && x.time == time && x.room_id == room_id).class_id;
+        } else false;
       },
       clearPreview() {
-        this.previews.splice(0, this.previews.length);
+        this.preview = [];
       },
       restoreHidden() {
         const hiddens = [];
-        let index = this.items.findIndex((x) => x.isHidden);
+        let index = this.class.findIndex((x) => x.isHidden);
 
         while (index !== -1) {
           hiddens.push(index);
@@ -255,81 +325,128 @@
         }
 
         for (let index of hiddens) {
-          this.items[index].isHidden = false;
+          this.class[index].isHidden = false;
         }
       },
-      startDrag(event, item) {
+      startDrag(event, time, room_id, class_id) {
         event.dataTransfer.dropEffect = "move";
         event.dataTransfer.effectAllowed = "move";
-        this.currentDragId = item.id;
+        this.currentDragId = class_id;
+        this.originPosition = {
+          time: time,
+          room_id: room_id,
+        };
       },
       endDrag() {
         this.currentDragId = -1;
-        this.currentOverPosition.time = -1;
-        this.currentOverPosition.classroom = -1;
-
+        this.currentOverPosition = {
+          time: -1,
+          room_id: -1,
+        };
         this.clearPreview();
         this.restoreHidden();
       },
-      onDrop(time, classroom) {
+      onDrop(weekday, time, room_id) {
         if (this.currentDragId === -1) return;
 
-        const item = this.items.find((x) => x.id === this.currentDragId);
+        const draggingClass = this.getProcessedClassById(this, this.currentDragId);
+        const draggingTimetableId = this.getTimetableId(
+          this,
+          weekday,
+          this.originPosition.time,
+          this.originPosition.room_id,
+          this.currentDragId
+        );
 
-        if (this.checkIndex(time, classroom)) {
-          const presentItem = this.getItem(time, classroom);
+        if (this.checkClass(weekday, time, room_id)) {
+          const presentClass = this.getProcessedClassById(this, this.checkClass(weekday, time, room_id));
+          const presentTimetableId = this.getTimetableId(this, weekday, time, room_id, presentClass.id);
 
-          presentItem.time = item.time;
-          presentItem.classroom = item.classroom;
+          const exchangeSwal = Swal.mixin({
+            customClass: {
+              confirmButton: "btn bg-gradient-success",
+              cancelButton: "btn bg-gradient-danger",
+            },
+            buttonsStyling: !1,
+          });
+
+          exchangeSwal
+            .fire({
+              title: "수업 시간 변경",
+              text: `${draggingClass.name}와 ${presentClass.name}의 시간을 교환할까요?`,
+              showCancelButton: !0,
+              reverseButtons: !0,
+              cancelButtonText: "취소",
+              confirmButtonText: "교환",
+            })
+            .then((e) => {
+              if (e.isConfirmed) {
+                this.putTimetable(this, presentTimetableId, weekday, this.originPosition.time, this.originPosition.room_id);
+                this.putTimetable(this, draggingTimetableId, weekday, time, room_id);
+              }
+            });
+        } else {
+          const moveSwal = Swal.mixin({
+            customClass: {
+              confirmButton: "btn bg-gradient-success",
+              cancelButton: "btn bg-gradient-danger",
+            },
+            buttonsStyling: !1,
+          });
+
+          moveSwal
+            .fire({
+              title: "수업 시간 이동",
+              text: `${draggingClass.name} 수업의 시간을 이동할까요?`,
+              showCancelButton: !0,
+              reverseButtons: !0,
+              cancelButtonText: "취소",
+              confirmButtonText: "이동",
+            })
+            .then((e) => {
+              if (e.isConfirmed) {
+                this.putTimetable(this, draggingTimetableId, weekday, time, room_id);
+              }
+            });
         }
-
-        item.time = time;
-        item.classroom = classroom;
       },
-      onOver(event, time, classroom) {
+      onOver(event, weekday, time, room_id) {
         if (this.currentDragId === -1) return;
 
         event.preventDefault();
 
-        if (this.currentOverPosition.time !== time || this.currentOverPosition.classroom !== classroom) {
-          this.currentOverPosition.time = time;
-          this.currentOverPosition.classroom = classroom;
+        if (this.currentOverPosition.time !== time || this.currentOverPosition.room_id !== room_id) {
+          this.currentOverPosition = {
+            time: time,
+            room_id: room_id,
+          };
         } else return;
 
         this.clearPreview();
         this.restoreHidden();
 
-        const draggingItem = this.items.find((x) => x.id == this.currentDragId);
-        const draggingTime = draggingItem.time;
-        const draggingClassroom = draggingItem.classroom;
+        if (time === this.originPosition.time && room_id === this.originPosition.room_id) return;
 
-        if (time === draggingTime && classroom === draggingClassroom) return;
+        const draggingClass = this.getProcessedClassById(this, this.currentDragId);
 
-        if (this.checkIndex(time, classroom)) {
-          const presentItem = this.getItem(time, classroom);
+        if (this.checkClass(weekday, time, room_id)) {
+          const presentClass = this.getProcessedClassById(this, this.checkClass(weekday, time, room_id));
 
-          //Push current dragging item to present place
-          this.previews.push({
-            time: time,
-            classroom: classroom,
-            class: draggingItem.class,
-            teacher: draggingItem.teacher,
-          });
           //Push present item to origin place
-          this.previews.push({
-            time: draggingItem.time,
-            classroom: draggingItem.classroom,
-            class: presentItem.class,
-            teacher: presentItem.teacher,
-          });
-        } else {
-          this.previews.push({
-            time: time,
-            classroom: classroom,
-            class: draggingItem.class,
-            teacher: draggingItem.teacher,
+          this.preview.push({
+            weekday: weekday,
+            time: this.originPosition.time,
+            room_id: this.originPosition.room_id,
+            class_id: presentClass.id,
           });
         }
+        //Push current dragging item to present place
+        this.preview.push({
+          weekday: weekday,
+          time: time,
+          room_id: room_id,
+          class_id: draggingClass.id,
+        });
       },
     },
   };
