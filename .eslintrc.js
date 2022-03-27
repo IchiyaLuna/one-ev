@@ -13,6 +13,7 @@ module.exports = {
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-undef": "off",
     "vue/no-parsing-error": ["error", { "invalid-first-character-of-tag-name": false }],
+    "@typescript-eslint/no-this-alias": "off",
   },
   globals: {
     $: true,
