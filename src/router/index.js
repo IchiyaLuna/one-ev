@@ -20,46 +20,51 @@ const routes = [
     children: [
       {
         path: "/home",
-        name: "home",
+        name: "Home",
+        icon: "fa-regular fa-house",
         components: { default: Home },
       },
       {
         path: "/student",
-        name: "student",
+        name: "학생 관리",
+        icon: "fa-regular fa-address-card",
         redirect: "/student/timeline",
         components: { default: Student },
         children: [
           {
             path: "/student/timeline",
-            name: "timeline",
+            name: "시간표",
             components: { studentRouter: Timeline },
           },
           {
             path: "/student/consult-history",
-            name: "consult-history",
+            name: "상담 기록",
             components: { studentRouter: ConsultHistory },
           },
         ],
       },
       {
         path: "/consult",
-        name: "consult",
-        components: { default: Consult }, 
-
+        name: "상담 관리",
+        icon: "fa-regular fa-clipboard-check",
+        components: { default: Consult },
       },
       {
         path: "/class",
-        name: "class",
+        name: "수업 관리",
+        icon: "fa-regular fa-screen-users",
         components: { default: Class },
       },
       {
         path: "/teacher",
-        name: "teacher",
+        name: "강사 관리",
+        icon: "fa-regular fa-chalkboard-user",
         components: { default: Teacher },
       },
       {
         path: "/academy",
-        name: "academy",
+        name: "학원 관리",
+        icon: "fa-regular fa-school",
         components: { default: Academy },
       },
     ],
@@ -72,4 +77,4 @@ const router = createRouter({
   routes,
 });
 
-export default router;
+export { routes, router };

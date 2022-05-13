@@ -6,13 +6,13 @@
           <li class="breadcrumb-item text-sm text-white">
             <i class="fa-regular fa-cubes"></i>
           </li>
-          <template v-for="(path, index) in props.currentPath" :key="path.name">
-            <li v-if="path.name" class="breadcrumb-item text-sm text-white" :class="props.currentPath.length - 1 === index ? 'active' : ''">
-              {{ path.name }}
+          <template v-for="(path, index) in navData.currentPath" :key="path">
+            <li class="breadcrumb-item text-sm text-white" :class="navData.currentPath.length - 1 === index ? 'active' : ''">
+              {{ path }}
             </li>
           </template>
         </ol>
-        <h6 class="font-weight-bolder text-white mb-0">{{ props.currentPath[props.currentPath.length - 1].name }}</h6>
+        <h6 class="font-weight-bolder text-white mb-0">{{ navData.currentPage }}</h6>
       </nav>
       <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
         <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -67,8 +67,21 @@
     </div>
   </nav>
 </template>
-<script setup>
-  const props = defineProps({
-    currentPath: Array,
-  });
+
+<script>
+  export default {
+    name: "navbar",
+    props: {
+      navData: {
+        type: Object,
+        default: () => {
+          return {
+            currentPath: [],
+            currentPage: "",
+          };
+        },
+        description: "Navbar data",
+      },
+    },
+  };
 </script>

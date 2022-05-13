@@ -62,14 +62,22 @@
     <!-- Bottom panel -->
     <div class="card flex-fill">
       <div class="card-header d-flex p-3 pb-0">
-        <div class="me-2">
-          <select v-model="currentWeekDay" class="form-control" name="choices-button" id="choices-button">
+        <div>
+          <select v-model="this.currentWeekDay" class="form-control" name="choices-button" id="choices-button">
             <option v-for="(name, index) in weekday" :key="index" :value="index">
               {{ name }}
             </option>
           </select>
         </div>
-        <NavSlider :navs="hall" />
+        <div class="nav-wrapper flex-fill position-relative ms-3 end-0">
+          <ul class="nav nav-pills nav-fill p-1" role="tablist">
+            <li class="nav-item" v-for="(item, index) in this.hall" :key="item.id">
+              <a @click="this.currentHall = item.id" class="nav-link mb-0 px-0 py-1" :class="index === 0 ? 'active' : ''" role="tab">
+                {{ item.name }}
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="card-body d-flex flex-column pt-0 p-3">
         <div class="d-flex flex-column flex-fill">
@@ -89,13 +97,10 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from "vue";
+  import InfoCard from "../components/InfoCard.vue";
+
   import { useAuthStore } from "../stores/auth";
   import { useAcademyStore } from "../stores/academy";
-
-  import InfoCard from "../components/InfoCard.vue";
-  import NavSlider from "../components/NavSlider.vue";
-
   ///////
   const today = new Date();
   const auth = useAuthStore();
@@ -103,18 +108,10 @@
   ///////
   const weekday = ["일", "월", "화", "수", "목", "금", "토"];
   const currentWeekDay = today.getDay();
-  const hall = ref([]);
-  const currentHall = ref(0);
   ///////
-  ///////
+
   await auth.login("testID", "testPW");
   await academy.fetchAcademy(auth.getApiKey);
-  await academy.fetchHall(auth.getApiKey);
-  ///////
-  onMounted(() => {
-    hall.value = academy.getHall;
-    currentHall.value = hall.value[0].id;
-  });
 </script>
 
 <style>

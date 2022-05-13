@@ -12,9 +12,11 @@ module.exports = {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-undef": "off",
+    "no-console": "off",
     "no-unused-vars": "off",
     "vue/no-parsing-error": ["error", { "invalid-first-character-of-tag-name": false }],
     "@typescript-eslint/no-this-alias": "off",
+    "no-this-alias": "off",
     "vue/valid-v-slot": [
       "error",
       {
